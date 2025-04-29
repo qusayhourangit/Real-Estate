@@ -1,0 +1,54 @@
+/* PropertyListingsPage.css */
+
+.property-listings-page .filter-sidebar {
+    background-color: #f8f9fa; /* لون خلفية فاتح مشابه للهوم */
+    border-radius: 10px; /* نفس الكروت */
+    /* التأكد من أن sticky-top يعمل بشكل صحيح */
+    top: 20px; /* مسافة من الأعلى عند التثبيت */
+    z-index: 1010; /* فوق العناصر الأخرى ولكن تحت الـ navbar إذا كان fixed */
+    top: calc(130px + 20px);
+
+  }
+  
+  .property-listings-page .filter-sidebar h5 {
+   color: var(--primary-color, #d6762e); /* استخدام المتغير اذا معرف عالميا او اللون مباشرة */
+   
+  }
+  
+  /* تعديل لون زر التطبيق الأساسي ليطابق الهوية */
+  .property-listings-page .btn-primary {
+    background-color: #d6762e !important; /* اللون البرتقالي الرئيسي */
+    border-color: #d6762e !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .property-listings-page .btn-primary:hover {
+    background-color: #e38e49 !important; /* لون أفتح عند المرور (مثل var(--hover-color) ) */
+    border-color: #e38e49 !important;
+  }
+  
+  .property-listings-page .form-label {
+    color: #333; /* لون أغمق قليلاً للLabels */
+  }
+  
+  .property-listings-page .form-select:focus,
+  .property-listings-page .form-control:focus {
+    border-color: #e38e49; /* لون الحدود عند التركيز */
+    box-shadow: 0 0 0 0.25rem rgba(214, 118, 46, 0.25); /* ظل خفيف بلون الهوية */
+  }
+  
+  /* تعديلات طفيفة على هوامش الأزرار إذا لزم الأمر */
+  .property-listings-page .d-grid .btn {
+      padding: 0.6rem 1rem; /* تكبير بسيط للأزرار */
+  }
+  
+  
+  /* تحسين عرض الرسائل */
+  .property-listings-page .alert {
+      border-radius: 8px;
+  }
+  
+  /* تعديل Spinner ليستخدم لون الهوية مباشرة */
+  .property-listings-page .spinner-border {
+      color: #d6762e !important;
+  }

@@ -1,0 +1,111 @@
+/* AboutUs.css */
+
+.about-us-page {
+    background-color: #ffffff;
+  }
+  
+  /* عنوان الصفحة الرئيسي */
+  .about-us-page .page-title {
+    color: var(--text-dark, #2c3e50);
+    margin-bottom: 0.5rem;
+  }
+  .about-us-page .page-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+  }
+  
+  /* حاوية الصورة العلوية */
+  .header-image-wrapper {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 5px solid white;
+  }
+  
+  /* تنسيق عام لعناوين الأقسام */
+  .about-us-page .section-header {
+    color: var(--hover-color, #d6762e);
+    font-weight: 600;
+    margin-bottom: 1.5rem; /* هامش سفلي افتراضي */
+    position: relative;
+    display: inline-block; /* يجعل العرض بقدر المحتوى */
+    padding-bottom: 8px; /* مسافة للخط السفلي */
+  }
+  
+  /* الخط السفلي للعناوين */
+  .about-us-page .section-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      /* تحديد الموقع بناءً على اتجاه النص (RTL) */
+      right: 0;
+      left: auto;
+      width: 50px; /* عرض الخط */
+      height: 3px;
+      background-color: var(--main-color, #e38e49);
+      border-radius: 2px;
+  }
+  
+  /* --- تعديل لتوسيط العنوان "تعرف على فريقنا" والخط تحته --- */
+  .section-header-wrapper.text-center {
+    display: flex; /* استخدام flex للتوسيط */
+    justify-content: center; /* توسيط أفقي */
+    margin-bottom: 1.5rem; /* إعادة الهامش الذي أُزيل من h2 */
+  }
+  
+  .section-header-wrapper.text-center .section-header {
+    margin-bottom: 0; /* إزالة الهامش من h2 نفسه */
+  }
+  
+  /* توسيط الخط السفلي للعناوين الوسطية */
+  .section-header-wrapper.text-center .section-header::after {
+    left: 50%; /* يبدأ الخط من المنتصف */
+    transform: translateX(-50%); /* يزيحه لليسار بمقدار نصف عرضه ليتوسط */
+    right: auto; /* إلغاء تحديد اليمين */
+  }
+  /* --------------------------------------------------------- */
+  
+  
+  .about-us-page .lh-lg {
+      line-height: 1.8 !important;
+  }
+  
+  /* قسم القيم */
+  .values-section {
+      background-color: #fcfaf7 !important;
+  }
+  .values-section .display-5 {
+     font-size: 2.8rem;
+  }
+  .values-section h5 {
+      color: var(--text-dark, #2c3e50);
+      margin-top: 0.5rem;
+  }
+  
+  /* قسم الفريق */
+  .team-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .team-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  .team-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--main-color, #e38e49);
+  }
+  
+  /* أيقونات العناوين */
+  .section-header .bi {
+      vertical-align: middle;
+      margin-left: 8px; /* مسافة لليسار في RTL */
+      font-size: 1.5rem;
+  }
+  .text-primary {
+      color: var(--main-color, #e38e49) !important;
+  }

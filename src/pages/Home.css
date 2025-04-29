@@ -1,0 +1,248 @@
+/* Home.css */
+
+:root {
+  /* تعريف المتغيرات اللونية (تأكد أنها موجودة) */
+  --primary-color: #d6762e; /* اللون البرتقالي الرئيسي للبحث */
+  --hover-color: #e38e49;  /* لون المرور - قد تحتاج لتعديله */
+  --bg-light: #f6f1eb;    /* لون خلفية الهيرو */
+  --text-dark: #2c3e50;   /* لون النص الداكن */
+  --text-light: #fff;     /* لون النص الأبيض */
+  --text-color: #555;     /* لون نص إضافي (للوصف مثلاً) */
+}
+
+
+/* --- تنسيقات الهيرو الأساسية (تبقى كما هي) --- */
+.hero-wrapper {
+  color: black;
+  position: relative;
+  padding-bottom: 2rem;
+  background: var(--bg-light);
+  border-radius: 15px;
+  margin-top: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+/* ... (باقي تنسيقات .hero-container, .hero-right-content, .hero-title, .hero-des, .hero-left-image, .image-container, إلخ) ... */
+.hero-container {
+  justify-content: space-between;
+  align-items: flex-end; /* تعديل المحاذاة لتكون أفضل */
+}
+.hero-title > h1 {
+  font-weight: 600;
+  font-size: 3.5rem;
+  line-height: 4rem;
+  margin-bottom: 1.5rem;
+}
+.orange-circle {
+  height: 4rem;
+  width: 4rem;
+  background: var(--hover-color); /* استخدام لون الهوفر للدائرة */
+  border-radius: 999px;
+  position: absolute;
+  right: -1rem;
+  top: -1rem;
+  z-index: -1;
+}
+.hero-des p {
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+.image-container {
+  width: 30rem;
+  height: 35rem;
+  overflow: hidden;
+  border-radius: 15rem 15rem 0 0;
+  border: 8px solid rgba(255, 255, 255, 0.12);
+}
+.image-container > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* --- إزالة التنسيقات القديمة لشريط البحث المنفصل --- */
+/*
+.search-bar { ... }
+.search-input-container { ... }
+.search-input { ... }
+.search-button { ... }
+.purpose-buttons { ... }
+.purpose-selector .purpose-btn { ... }
+*/
+
+/* --- تنسيقات شريط البحث المدمج --- */
+.search-section {
+    margin-top: 2rem; /* زيادة المسافة العلوية */
+}
+
+.integrated-search-container {
+    display: flex; /* استخدام Flexbox للتنسيق */
+    align-items: center; /* محاذاة العناصر عمودياً */
+    background-color: white;
+    border-radius: 50px; /* حواف دائرية جداً */
+    padding: 6px 8px; /* padding داخلي بسيط */
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    max-width: 650px; /* زيادة العرض الأقصى قليلاً */
+}
+
+.integrated-search-container:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* تنسيق أزرار الغرض داخل الشريط */
+.purpose-selector-integrated {
+    display: flex;
+    align-items: center;
+    /* لا نحتاج حدود أو خلفية هنا لأنها على الحاوية */
+}
+
+.purpose-btn-integrated {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color); /* لون النص الافتراضي */
+    padding: 0.5rem 1rem; /* padding للزر */
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 30px; /* حواف دائرية للزر الداخلي */
+    margin-left: 4px; /* مسافة صغيرة بين الأزرار */
+}
+
+.purpose-btn-integrated:hover {
+    background-color: #f0f0f0; /* خلفية فاتحة عند المرور */
+}
+
+.purpose-btn-integrated.active {
+    background-color: var(--primary-color); /* لون الهوية للزر النشط */
+    color: white;
+    font-weight: 600;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* فاصل بسيط بين الأزرار وحقل البحث */
+.search-separator {
+    width: 1px;
+    height: 25px; /* ارتفاع الفاصل */
+    background-color: #e0e0e0;
+    margin: 0 10px; /* مسافة حول الفاصل */
+}
+
+/* تنسيق حقل إدخال الموقع */
+.search-input-integrated {
+    border: none !important; /* إزالة الحدود */
+    box-shadow: none !important; /* إزالة الظل عند التركيز */
+    background-color: transparent !important; /* خلفية شفافة */
+    padding: 0.5rem 0.5rem; /* تعديل padding */
+    font-size: 0.95rem;
+    min-width: 150px; /* حد أدنى للعرض */
+}
+.search-input-integrated::placeholder {
+    color: #aaa;
+}
+
+/* تنسيق زر البحث النهائي */
+.search-button-integrated {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 50% !important; /* زر دائري تمامًا */
+    width: 100px; /* حجم الزر */
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important; /* إزالة أي padding */
+    font-size: 1.2rem !important; /* حجم الأيقونة */
+    margin-right: 5px; /* مسافة بسيطة قبل الزر */
+    transition: all 0.3s ease;
+}
+
+.search-button-integrated:hover {
+    background: var(--hover-color) !important;
+    transform: scale(1.05);
+}
+
+
+/* --- تنسيقات الإحصائيات (تبقى كما هي) --- */
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.5rem; /* زيادة المسافة قليلاً */
+  gap: 1rem;
+}
+/* ... (باقي تنسيقات .stat-item, .stat-number, .stat-label) ... */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+
+/* --- التكيف مع الشاشات الصغيرة --- */
+@media (max-width: 1200px) {
+    /* ... (نفس التعديلات السابقة للهيرو) ... */
+  .hero-container {
+    flex-direction: column; align-items: center; gap: 2rem;
+  }
+  .hero-right-content { width: 100%; order: 2; /* المحتوى يأتي ثانيًا */}
+  .hero-left-image { width: 100%; max-width: 30rem; height: 25rem; order: 1; /* الصورة أولاً */}
+   .search-section { width: 100%; max-width: 550px; margin-left: auto; margin-right: auto;} /* توسيط وتحديد عرض البحث */
+}
+
+@media (max-width: 768px) {
+    /* ... (نفس التعديلات السابقة للهيرو) ... */
+  .hero-title > h1 { font-size: 2.5rem; line-height: 3rem; }
+  .stats-container { flex-direction: column; gap: 1.5rem; }
+
+  /* تعديل شريط البحث المدمج للشاشات الصغيرة */
+  .integrated-search-container {
+      flex-direction: column; /* ترتيب عمودي */
+      border-radius: 30px; /* حواف أقل دائرية */
+      padding: 15px;
+      max-width: 90%;
+      margin: 0 auto; /* توسيط */
+  }
+  .purpose-selector-integrated {
+      margin-bottom: 15px; /* مسافة تحت الأزرار */
+      width: 100%;
+      justify-content: center; /* توسيط الأزرار */
+  }
+  .purpose-btn-integrated {
+      flex-grow: 1; /* جعل الأزرار تأخذ عرض متساوي */
+      text-align: center;
+      padding: 0.6rem 0.5rem; /* تعديل padding */
+  }
+  .search-separator {
+      display: none; /* إخفاء الفاصل */
+  }
+  .search-input-integrated {
+      margin-bottom: 15px; /* مسافة تحت حقل الإدخال */
+      text-align: center !important; /* توسيط النص */
+      width: 100%;
+      padding: 0.8rem 1rem;
+  }
+  .search-input-integrated::placeholder { text-align: center; }
+  .search-button-integrated {
+      width: 100%; /* جعل الزر يأخذ العرض الكامل */
+      border-radius: 30px !important; /* نفس حواف الحاوية */
+      height: 50px;
+      margin-right: 0;
+  }
+}
+
+/* إعادة تعريف text-primary للتأكد من تطبيق اللون */
+.text-primary{
+  color: var(--primary-color) !important ;
+}

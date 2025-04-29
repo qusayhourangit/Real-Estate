@@ -1,0 +1,344 @@
+:root {
+  --primary-color: #e38e49;
+  --primary-hover: #d6762e;
+  --light-bg: #f6f1eb;
+  --text-dark: #2c3e50;
+  --border-color: #ddd;
+  --error-color: #dc3545;
+}
+
+.property-form-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  direction: rtl;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--primary-color);
+}
+
+.form-header h2 {
+  font-weight: 700;
+}
+
+.form-header i {
+  margin-left: 10px;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.alert-danger i {
+  margin-left: 8px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* قسم الخريطة */
+.map-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.map-container {
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.map-search {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-input-group {
+  display: flex;
+}
+
+.search-input-group input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px 0 0 5px;
+  border-left: none;
+}
+
+.search-input-group button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0 15px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-input-group button:hover {
+  background-color: var(--primary-hover);
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.result-item {
+  padding: 8px 12px;
+  background-color: var(--light-bg);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.result-item:hover {
+  background-color: #eee;
+}
+
+/* قسم التفاصيل */
+.details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label i {
+  margin-left: 8px;
+  color: var(--primary-color);
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: white;
+}
+
+.price-input {
+  position: relative;
+}
+
+.price-input .currency {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* عدادات الغرف */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--light-bg);
+  padding: 15px 10px;
+  border-radius: 8px;
+}
+
+.counter label {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.counter label i {
+  margin-left: 5px;
+  color: var(--primary-color);
+}
+
+.counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.counter-controls button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.counter-controls button:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.counter-controls span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* تحميل الصور */
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 0.9rem;
+}
+
+.upload-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.file-names {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.image-preview {
+  position: relative;
+  height: 100px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* أزرار التقديم */
+.form-actions {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.form-actions button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 150px;
+}
+
+.form-actions button:hover {
+  background-color: var(--primary-hover);
+}
+
+.form-actions button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.form-actions button i {
+  margin-left: 8px;
+}

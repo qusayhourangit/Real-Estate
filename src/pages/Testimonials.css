@@ -1,0 +1,174 @@
+/* ================================ */
+/*      Testimonials.css            */
+/* ================================ */
+
+/* --- تنسيقات القسم الرئيسي --- */
+.testimonials-section {
+    /* يمكنك تعديل لون الخلفية إذا أردت */
+    background-color: #f6f1eb;
+    /* نفس لون NavBar والهوم */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    margin-bottom: 3rem;
+}
+
+/* حاوية القسم مع التموضع والمسافات للأزرار */
+.testimonials-section .container {
+    position: relative;
+    /* ضروري لتموضع الأزرار المخصصة */
+    /* إضافة padding جانبي لإفساح المجال للأزرار */
+    padding-left: 50px;
+    /* مثال: مسافة لزر الـ Prev */
+    padding-right: 50px;
+    /* مثال: مسافة لزر الـ Next */
+}
+
+/* عنوان القسم والخط السفلي */
+.testimonials-section .section-title {
+    color: var(--text-dark, #2c3e50);
+    position: relative;
+    padding-bottom: 10px;
+    right: 42%;
+}
+
+.testimonials-section .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--main-color, #e38e49);
+    border-radius: 2px;
+}
+
+/* --- تنسيقات كارت الرأي --- */
+.testimonial-card {
+    background-color: white;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none !important;
+    /* إزالة أي حدود افتراضية */
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.testimonial-avatar {
+    width: 80px;
+    height: 80px;
+    border: 3px solid var(--main-color, #e38e49);
+    object-fit: cover;
+}
+
+.testimonial-stars {
+    font-size: 1.1rem;
+}
+
+.testimonial-quote {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.testimonial-quote i.bi-quote {
+    color: var(--main-color, #e38e49);
+    vertical-align: middle;
+}
+
+/* --- إخفاء أزرار Swiper الافتراضية --- */
+.testimonials-section .swiper-button-next,
+.testimonials-section .swiper-button-prev {
+    display: none !important;
+}
+
+.testimonials-section .swiper-button-next::after,
+.testimonials-section .swiper-button-prev::after {
+    display: none !important;
+}
+
+/* --- تنسيق أزرار التنقل المخصصة --- */
+.swiper-custom-nav-btn {
+    position: absolute;
+    top: 50%;
+    /* توسيط عمودي */
+    transform: translateY(-50%);
+    z-index: 10;
+    /* فوق السلايدر */
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.9);
+    /* خلفية شبه شفافة */
+    color: var(--main-color, #e38e49);
+    /* لون الأيقونة */
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    /* حجم أيقونة react-icons */
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.swiper-custom-nav-btn:hover {
+    background-color: var(--main-color, #e38e49);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* تحديد موقع كل زر */
+.swiper-custom-nav-btn.prev-btn {
+    /* لـ RTL: Prev يكون على اليسار */
+    left: 0px;
+    /* تعديل المسافة من الحافة اليسرى */
+}
+
+.swiper-custom-nav-btn.next-btn {
+    /* لـ RTL: Next يكون على اليمين */
+    right: 0px;
+    /* تعديل المسافة من الحافة اليمنى */
+}
+
+/* إزالة الخطوط المحيطة بالأزرار عند التركيز (اختياري) */
+.swiper-custom-nav-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(227, 142, 73, 0.3);
+    /* إضافة ظل خفيف عند التركيز */
+}
+
+/* --- تنسيق نقاط التنقل (Pagination) --- */
+.testimonials-section .mySwiper {
+    /* لم نعد بحاجة لـ position: relative هنا */
+    padding-bottom: 40px;
+    /* مسافة كافية لنقاط التنقل */
+}
+
+.testimonials-section .swiper-pagination {
+    /* يمكن تعديل موقع النقاط إذا لزم الأمر */
+    bottom: 0px !important;
+    /* وضعها أسفل السلايدر */
+}
+
+.testimonials-section .swiper-pagination-bullet {
+    background-color: #ccc;
+    opacity: 1;
+    width: 10px;
+    height: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.testimonials-section .swiper-pagination-bullet-active {
+    background-color: var(--main-color, #e38e49);
+}
+
+/* --- تأكد من أن السلايد يأخذ الارتفاع المناسب --- */
+.testimonials-section .swiper-slide {
+    height: auto !important;
+    /* يسمح للسلايد بأخذ ارتفاع الكارد */
+}

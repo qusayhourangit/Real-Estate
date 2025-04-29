@@ -1,0 +1,110 @@
+/* PropertyCard.css */
+
+/* حاوية الصورة */
+.property-card-image-container {
+    position: relative;
+  }
+  
+  /* صورة العقار */
+  .property-card-image {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .property-card:hover .property-card-image {
+    transform: scale(1.05);
+  }
+  
+  /* زر المفضلة */
+  .favorite-btn-card {
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+    border-radius: 50% !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem !important;
+    z-index: 3;
+    border: none !important;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .favorite-btn-card.btn-light {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .favorite-btn-card svg {
+    color: #dc3545;
+  }
+  
+  .favorite-btn-card.btn-light:hover {
+    background-color: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .favorite-btn-card.btn-danger {
+    background-color: rgba(220, 53, 69, 0.85) !important;
+    color: white !important;
+  }
+  
+  .favorite-btn-card.btn-danger svg {
+    color: white !important;
+  }
+  
+  .favorite-btn-card.btn-danger:hover {
+    background-color: rgba(220, 53, 69, 1) !important;
+  }
+  
+  .favorite-btn-card:hover {
+    transform: scale(1.1);
+  }
+  
+  /* عنوان العقار */
+  .property-card-title a.stretched-link {
+    color: var(--text-dark, #2c3e50);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+  }
+  
+  .property-card-title a.stretched-link:hover {
+    color: var(--main-color, #e38e49);
+    text-decoration: none;
+  }
+  
+  .property-card-title {
+    position: relative;
+  }
+  
+  /* بادج نوع الصفقة */
+  .property-purpose-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    font-size: 0.75rem;
+    padding: 0.3em 0.6em;
+  }
+  
+  /* أيقونة العنوان */
+  .property-card-address i {
+    color: var(--main-color, #e38e49);
+  }
+  
+  /* تفاصيل سريعة */
+  .property-quick-stats i {
+    font-size: 1.1rem;
+  }
+  
+  .property-quick-stats p {
+    margin-top: 2px;
+  }
+  

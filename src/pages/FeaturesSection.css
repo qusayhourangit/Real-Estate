@@ -1,0 +1,52 @@
+
+.features {
+    background-color: #ffffff; /* خلفية بيضاء للقسم */
+  }
+  
+  .features .section-title {
+    color: var(--text-dark, #2c3e50);
+     position: relative;
+     padding-bottom: 15px;
+  }
+  
+  /* خط تحت العنوان (مشابه لـ Testimonials) */
+  .features .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--main-color, #e38e49);
+      border-radius: 2px;
+  }
+  
+  
+  .feature-card {
+    background-color: #f8f9fa; /* خلفية فاتحة قليلاً للكارد */
+    border: 1px solid #e9ecef;
+    border-radius: 10px !important; /* تأكيد الحواف الدائرية */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-8px); /* رفع أكبر عند المرور */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important; /* ظل أوضح */
+    border-color: var(--main-color, #e38e49); /* تغيير لون الحدود عند المرور */
+  }
+  
+  .feature-icon {
+    /* اللون تم تحديده بـ text-primary في JSX */
+    /* يمكن إضافة تأثيرات أخرى هنا */
+  }
+  
+  .feature-card h3 {
+    color: var(--text-dark, #2c3e50);
+    margin-bottom: 0.75rem; /* تعديل الهامش */
+  }
+  
+  .feature-card p {
+    line-height: 1.7; /* زيادة ارتفاع السطر للوصف */
+    font-size: 0.95rem;
+  }

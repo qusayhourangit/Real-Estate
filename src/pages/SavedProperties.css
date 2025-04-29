@@ -1,0 +1,224 @@
+.saved-prompt-section {
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  /* تم تطبيق الخلفية والـ padding عبر style prop في JSX */
+}
+
+.saved-prompt-card {
+  background-color: #ffffff; /* تأكيد خلفية الكارد */
+  border-radius: 20px !important; /* حواف أكثر دائرية */
+  /* إضافة تأثير ظل داخلي خفيف */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.prompt-icon-container {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto; /* توسيط أفقي */
+  background: linear-gradient(145deg, var(--main-color, #e38e49), var(--hover-color, #d6762e));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(227, 142, 73, 0.4);
+}
+
+.prompt-icon-container i {
+  font-size: 2.5rem; /* حجم الأيقونة */
+  color: white;
+}
+
+.prompt-title {
+  color: var(--text-dark, #2c3e50);
+  font-weight: 700 !important; /* تأكيد الوزن */
+}
+
+.prompt-text {
+  color: #5a6778; /* لون أغمق قليلاً من text-muted */
+  font-size: 1.1rem; /* تكبير الخط قليلاً */
+}
+
+/* تعديل أزرار الدعوة */
+.saved-prompt-section .register-btn,
+.saved-prompt-section .login-btn {
+  padding: 0.8rem 1.8rem !important; /* زيادة حجم الأزرار */
+  font-size: 1rem !important;
+  border-radius: 50px !important; /* أزرار دائرية الحواف */
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.saved-prompt-section .register-btn {
+  background: var(--main-color, #e38e49);
+  border-color: var(--main-color, #e38e49);
+  color: white;
+}
+.saved-prompt-section .register-btn:hover {
+  background: var(--hover-color, #d6762e);
+  border-color: var(--hover-color, #d6762e);
+  transform: translateY(-3px);
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.saved-prompt-section .login-btn {
+  background: transparent;
+  border: 2px solid var(--main-color, #e38e49);
+  color: var(--main-color, #e38e49);
+}
+.saved-prompt-section .login-btn:hover {
+  background: var(--main-color, #e38e49);
+  color: white;
+  transform: translateY(-3px);
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+/* --- تنسيقات الكارد للعقارات المحفوظة (للمستخدم المسجل) --- */
+.saved-properties .section-title {
+   color: var(--text-dark, #2c3e50);
+   position: relative;
+   padding-bottom: 15px; /* زيادة المسافة للخط */
+}
+.saved-properties .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px; /* خط أعرض قليلاً */
+    height: 4px; /* خط أسمك قليلاً */
+    background-color: var(--main-color, #e38e49);
+    border-radius: 3px;
+}
+
+
+.saved-properties .property-card {
+  border-radius: 15px !important; /* توحيد حواف الكروت */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.saved-properties .property-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.saved-properties .property-image-wrapper {
+    position: relative;
+    height: 220px; /* زيادة ارتفاع الصورة قليلاً */
+    overflow: hidden;
+    cursor: pointer;
+}
+.saved-properties .property-image {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   transition: transform 0.4s ease;
+}
+.saved-properties .property-card:hover .property-image {
+    transform: scale(1.08); /* تكبير أكثر للصورة عند المرور */
+}
+
+.saved-properties .property-tags {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column; /* ترتيب العلامات عمودياً */
+    gap: 6px; /* مسافة بين العلامات */
+    z-index: 2;
+}
+.saved-properties .property-tags .badge {
+    font-size: 0.7rem;
+    padding: 0.3em 0.7em;
+    color: white !important; /* تأكيد لون النص */
+     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.saved-properties .favorite-btn-remove {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border-radius: 50% !important;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 0.9rem;
+    background-color: rgba(255, 82, 82, 0.85) !important; /* لون أحمر مع شفافية */
+    border: none !important;
+    color: white !important;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+.saved-properties .favorite-btn-remove:hover {
+    background-color: rgba(220, 53, 69, 1) !important; /* أغمق عند المرور */
+    transform: scale(1.1);
+}
+
+.saved-properties .property-card-title a {
+    color: var(--text-dark, #2c3e50);
+    font-weight: 600;
+    font-size: 1.1rem;
+    /* لمنع تغيير اللون الافتراضي للرابط عند زيارته */
+    &:visited {
+        color: var(--text-dark, #2c3e50);
+    }
+     /* إظهار خط تحت العنوان عند المرور على الكارد كله (بسبب stretched-link) */
+    .saved-properties .property-card:hover & {
+       color: var(--main-color, #e38e49);
+       text-decoration: underline !important;
+    }
+}
+/* إزالة الخط السفلي الافتراضي للرابط */
+.saved-properties .property-card-title a.stretched-link::after {
+    content: none !important;
+}
+
+
+.saved-properties .property-card-address {
+    font-size: 0.85rem;
+}
+.saved-properties .property-card-address i {
+   color: var(--main-color, #e38e49);
+}
+
+
+.saved-properties .property-card-price {
+   color: var(--hover-color, #d6762e); /* لون السعر أغمق قليلاً */
+}
+
+
+/* --- تنسيق أزرار التنقل لـ Swiper داخل قسم المحفوظات --- */
+.saved-properties .swiper-button-next,
+.saved-properties .swiper-button-prev {
+    color: var(--main-color, #e38e49);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    width: 44px; /* حجم أكبر قليلاً */
+    height: 44px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    /* تعديل الموقع ليكون أقرب للحواف */
+    top: 45%; /* تعديل الموقع العمودي */
+}
+.saved-properties .swiper-button-next { right: -10px; } /* تحريك لليمين */
+.saved-properties .swiper-button-prev { left: -10px; } /* تحريك لليسار */
+
+.saved-properties .swiper-button-next::after,
+.saved-properties .swiper-button-prev::after {
+  font-size: 1.4rem !important; /* أيقونة أكبر */
+  font-weight: bold;
+}
+
+.saved-properties .swiper-button-next:hover,
+.saved-properties .swiper-button-prev:hover {
+   background-color: var(--main-color, #e38e49);
+   color: white;
+}
+
+/* تعديل لضمان عرض الكروت بشكل كامل في Swiper */
+.saved-properties .swiper-slide {
+    height: auto !important; /* مهم جداً */
+    display: flex; /* يساعد في محاذاة الكارد */
+}

@@ -1,0 +1,317 @@
+/* --- PropertyDetails.css --- */
+
+/* --- استيراد متغيرات الألوان (إذا لم تكن معرفة عالميًا) --- */
+:root {
+    --primary-color: #e38e49; /* اللون البرتقالي الرئيسي */
+    --primary-hover: #d6762e; /* لون التحويم */
+    --light-bg: #f8f9fa; /* خلفية فاتحة مثل bootstrap */
+    --text-dark: #212529; /* لون النص الداكن مثل bootstrap */
+    --border-color: #dee2e6; /* لون الحدود مثل bootstrap */
+    --success-color: #198754; /* لون النجاح (للأخضر) */
+    --secondary-color: #6c757d; /* لون ثانوي */
+}
+
+.property-details-container {
+    direction: rtl; /* اتجاه النص من اليمين لليسار */
+}
+
+/* --- حالات التحميل والخطأ --- */
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading-container p {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+}
+
+.error-container i {
+    font-size: 1.5rem;
+    margin-left: 10px; /* في العربي يكون يسار */
+}
+
+/* --- معرض الصور --- */
+.image-gallery-container {
+    position: relative;
+}
+
+.image-gallery {
+    display: grid;
+    gap: 8px; /* المسافة بين الصور */
+    /* --- تخطيط احترافي: صورة كبيرة + 3 صغيرة (يمكن تعديله) --- */
+    /* grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 200px); */
+    /* --- تخطيط 2x2 أبسط --- */
+     grid-template-columns: repeat(2, 1fr);
+     grid-template-rows: repeat(2, minmax(180px, 25vh)); /* صفين بارتفاع معقول */
+
+    /* --- تخطيط صورة كبيرة و 3 صور أصغر بجانبها --- */
+    /* grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(3, calc(33.33% - 5px));
+    height: 400px; */
+
+}
+
+.gallery-item {
+    overflow: hidden;
+    border-radius: 8px; /* حواف دائرية للصور */
+    position: relative;
+    background-color: var(--light-bg); /* لون للخلفية قبل تحميل الصورة */
+    cursor: pointer; /* تغيير المؤشر للإشارة إلى إمكانية النقر */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- تحديد مكان كل صورة في الشبكة (مثال لشبكة 2x2) --- */
+.gallery-item.item-1 { grid-column: 1 / 2; grid-row: 1 / 2; }
+.gallery-item.item-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
+.gallery-item.item-3 { grid-column: 1 / 2; grid-row: 2 / 3; }
+.gallery-item.item-4 { grid-column: 2 / 3; grid-row: 2 / 3; }
+
+/* --- تحديد مكان كل صورة في الشبكة (مثال لشبكة 1 كبير و 3 صغير) --- */
+/*
+.gallery-item.item-1 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 4;
+}
+.gallery-item.item-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
+.gallery-item.item-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
+.gallery-item.item-4 { grid-column: 2 / 3; grid-row: 3 / 4; }
+*/
+
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* قص الصورة لتملأ المساحة دون تشويه */
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05); /* تكبير بسيط عند التحويم */
+    filter: brightness(0.9);
+}
+
+.no-images-placeholder {
+    grid-column: 1 / -1; /* يشغل كل الأعمدة */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    background-color: var(--light-bg);
+    color: var(--secondary-color);
+    border-radius: 8px;
+    font-size: 1.1rem;
+}
+.no-images-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+
+/* --- رأسية العقار --- */
+.property-header {
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.property-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem; /* تقليل الهامش السفلي */
+}
+
+.property-location-purpose {
+    font-size: 0.95rem;
+}
+
+.property-location-purpose .text-muted {
+    display: flex;
+    align-items: center;
+}
+
+.purpose-badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.7em;
+    font-weight: 600;
+}
+.purpose-sale { background-color: var(--primary-color); color: white; }
+.purpose-rent { background-color: var(--success-color); color: white; }
+
+
+.property-price-tag {
+    margin-top: 10px;
+}
+.property-price-tag .price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.property-price-tag .rent-period {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-right: 5px;
+}
+
+/* --- كرت الميزات --- */
+.property-features-card .card-header,
+.property-description-card .card-header,
+.map-section-details .card-header {
+    background-color: var(--light-bg);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.property-features-card .card-header h5,
+.property-description-card .card-header h5,
+.map-section-details .card-header h5 {
+    display: flex;
+    align-items: center;
+}
+.property-features-card .card-header i,
+.property-description-card .card-header i,
+.map-section-details .card-header i {
+   color: var(--primary-color);
+   font-size: 1.2em; /* تكبير الأيقونة قليلاً */
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* أعمدة متجاوبة */
+    gap: 20px; /* مسافة بين العناصر */
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column; /* ترتيب العناصر عمودياً */
+    align-items: center; /* توسيط أفقي */
+    text-align: center;
+    padding: 10px;
+    /* background-color: #f1f1f1; */ /* خلفية خفيفة للعنصر */
+    border-radius: 5px;
+}
+
+.feature-item .feature-icon {
+    font-size: 2rem; /* حجم الأيقونة */
+    color: var(--primary-color); /* لون الأيقونة */
+    margin-bottom: 8px;
+}
+
+.feature-item span {
+    font-size: 0.85rem; /* حجم النص الصغير */
+    color: var(--secondary-color); /* لون النص الثانوي */
+    margin-bottom: 3px;
+}
+
+.feature-item strong {
+    font-size: 1rem; /* حجم النص الأساسي */
+    color: var(--text-dark); /* لون النص الأساسي */
+    font-weight: 600;
+}
+
+/* --- الوصف --- */
+.property-description-card p {
+    line-height: 1.7;
+    color: #555;
+}
+
+/* --- الخريطة --- */
+.map-container-details {
+    border-radius: 0 0 8px 8px; /* حواف سفلية دائرية فقط لتناسب الكرت */
+    overflow: hidden; /* ضروري لإخفاء أجزاء الخريطة الزائدة */
+}
+.map-section-details .card-footer {
+    background-color: var(--light-bg);
+}
+
+/* --- صندوق التواصل --- */
+.contact-box {
+    background-color: var(--light-bg);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* لتثبيته أثناء التمرير */
+    position: sticky;
+    top: 20px; /* المسافة من الأعلى عند التثبيت */
+    top: calc(130px + 20px);
+}
+
+.contact-box h5 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+.contact-box h5 i {
+    font-size: 1.3em;
+}
+.contact-box hr {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.contact-btn {
+    display: flex; /* لجعل الأيقونة والنص بجانب بعض */
+    align-items: center;
+    justify-content: center; /* لتوسيط المحتوى */
+    font-weight: 600;
+    padding: 10px 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.contact-btn i {
+    font-size: 1.2rem; /* حجم أيقونة الزر */
+    margin-left: 8px; /* مسافة بين الأيقونة والنص */
+}
+
+/* تخصيص ألوان الأزرار يمكن تعديلها */
+.whatsapp-btn { background-color: #25D366; border-color: #25D366; }
+.whatsapp-btn:hover { background-color: #1EAE54; border-color: #1EAE54; }
+
+.call-btn { background-color: var(--primary-color); border-color: var(--primary-color); }
+.call-btn:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
+
+/* --- تجاوبية الشاشة --- */
+@media (max-width: 991px) {
+    /* عند الشاشات الأصغر من lg، اجعل صندوق التواصل تحت المحتوى */
+    .contact-box {
+        position: static; /* إلغاء التثبيت */
+        margin-top: 20px;
+    }
+     .image-gallery {
+        /* يمكن تغيير تخطيط الصور للشاشات الصغيرة */
+        grid-template-columns: 1fr; /* عمود واحد */
+        grid-template-rows: repeat(4, 200px); /* أربعة صفوف */
+     }
+     .gallery-item.item-1,
+     .gallery-item.item-2,
+     .gallery-item.item-3,
+     .gallery-item.item-4 {
+        grid-column: auto;
+        grid-row: auto;
+     }
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* تقليل العرض الأدنى للعناصر */
+        gap: 15px;
+    }
+    .property-price-tag .price {
+        font-size: 1.5rem;
+    }
+    .property-title {
+        font-size: 1.5rem;
+    }
+}

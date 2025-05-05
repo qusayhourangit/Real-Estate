@@ -236,7 +236,7 @@ const PendingProperties = () => {
                       variant="outline-primary"
                       size="sm"
                       className="me-2 mb-1 mb-lg-0"
-                      onClick={() => navigate(`/property/${property.id}`)} // افتراض أن هذا المسار يعرض التفاصيل
+                      onClick={() => navigate(`/properties/${property.id}`)} // افتراض أن هذا المسار يعرض التفاصيل
                       title="عرض التفاصيل"
                     >
                         <i className="bi bi-eye-fill"></i>

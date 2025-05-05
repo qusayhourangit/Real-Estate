@@ -56,24 +56,15 @@ export default function Login() {
   const onSubmit = async (formData) => {
     setServerError('');
     setServerSuccess('');
-  
+
+    // استخدام loginUser من السلايس
     dispatch(loginUser(formData))
       .then((result) => {
         if (result.meta.requestStatus === 'fulfilled') {
           setServerSuccess('تم تسجيل الدخول بنجاح');
-          navigate('/');
+          navigate('/'); // التوجيه إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
         } else {
-          const errorMessage = result.payload || 'فشل تسجيل الدخول';
-  
-          // التحقق من إذا كان المستخدم محظور
-          if (
-            typeof errorMessage === 'string' &&
-            errorMessage.toLowerCase().includes('banned')
-          ) {
-            setServerError('تم حظر حسابك. الرجاء التواصل مع الإدارة.');
-          } else {
-            setServerError(errorMessage); // اظهر الرسالة الحقيقية من الـ API
-          }
+          setServerError(result.error.message || 'فشل تسجيل الدخول');
         }
       })
       .catch((err) => {

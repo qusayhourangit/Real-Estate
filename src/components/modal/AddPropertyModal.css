@@ -13,7 +13,9 @@
   padding: 20px;
   direction: rtl;
 }
-
+.room-counters-section i{
+  color:#e38e49 ;
+}
 .form-header {
   text-align: center;
   margin-bottom: 25px;
@@ -22,10 +24,15 @@
 
 .form-header h2 {
   font-weight: 700;
+  font-size: 2rem !important;
+  color: #e38e49 !important;
 }
-
+.btn-outline-secondary:hover{
+  background-color:#e38e49 ;
+}
 .form-header i {
   margin-left: 10px;
+  color: #e38e49;
 }
 
 .alert-danger {
@@ -170,6 +177,7 @@
   border: 1px solid var(--border-color);
   border-radius: 5px;
   background-color: white;
+  padding-right: 30px;
 }
 
 .price-input {
@@ -222,8 +230,7 @@
 .counter-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
+  gap: 2px;}
 
 .counter-controls button {
   width: 30px;
@@ -256,7 +263,9 @@
   align-items: center;
   gap: 10px;
 }
-
+.file-upload .btn:hover{
+  background-color: #e38e49;
+}
 .upload-btn {
   background-color: var(--primary-color);
   color: white;
@@ -341,4 +350,89 @@
 
 .form-actions button i {
   margin-left: 8px;
+}
+.property-form-container {
+  max-width: 1000px;
+  margin: auto;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.form-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #1c1c1c;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.file-upload .btn {
+  border-radius: 20px;
+}
+
+.image-preview img {
+  border: 2px solid #ddd;
+  transition: transform 0.3s ease;
+}
+.image-preview img:hover {
+  transform: scale(1.05);
+}
+
+.map-outer-container {
+  overflow: hidden;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.search-results {
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.counters-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.counter-controls button {
+  border-radius: 0;
+}
+.room-counters-section .counter-box {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.room-counters-section .counter-box:hover {
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.room-counters-section .counter-label {
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 8px;
+}
+.addprop{
+  margin-inline: 30px;
 }

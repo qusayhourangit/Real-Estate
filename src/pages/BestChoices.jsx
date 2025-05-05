@@ -25,7 +25,14 @@ const containerVariants = {
   }
 };
 // const itemVariants = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }; // Uncomment if using motion.div per item
-
+const formatPrice = (price) => {
+  // Simplified price display - assumes price is a number or null/undefined
+  if (price == null || isNaN(Number(price))) {
+     return 'السعر عند الطلب';
+  }
+  // Using basic toLocaleString for number formatting with Syrian Pounds symbol
+  return `${Number(price).toLocaleString('en-US')} ل.س`;
+};
 // --- Helper Functions ---
 const getDealTypeColor = (type) => type === 'sale' ? 'danger' : type === 'rent' ? 'success' : 'primary';
 const getPropertyTypeColor = (type) => type === 'house' ? 'info' : type === 'commercial' ? 'warning' : 'secondary';
@@ -245,9 +252,10 @@ const BestChoices = () => {
                     </div>
 
                     <Card.Body>
-                      <div className="fw-bold fs-5 mb-1"> {/* Price color from CSS */}
-                        {property.price ? `${Number(property.price).toLocaleString()} ل.س` : 'السعر عند الطلب'}
-                      </div>
+                    <div className="fw-bold fs-5 mb-1" style={{ color: '#d6762e' }}>
+          {formatPrice(property.price)}
+          {property.purpose === 'rent' && <span className="rent-period text-muted small"> / شهري</span>}
+        </div>
                       <h5 className="card-title"> {/* Title color/overflow from CSS */}
                          {property.title || 'عنوان غير متوفر'}
                       </h5>

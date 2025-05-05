@@ -53,7 +53,7 @@ export const loginUser = createAsyncThunk(
       } else {
         // إذا لم تكن البيانات موجودة بالشكل المتوقع
         console.error("Login API response missing token or user:", response.data);
-        return rejectWithValue('تم حظر حسابك. الرجاء التواصل مع الإدارة.');
+        return rejectWithValue('فشل تسجيل الدخول: استجابة غير متوقعة من الخادم.');
       }
 
     } catch (error) {

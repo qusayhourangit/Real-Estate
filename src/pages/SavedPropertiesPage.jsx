@@ -7,7 +7,7 @@ import { Spinner, Button, Container, Alert, Card, Badge, Row, Col } from 'react-
 import { motion } from 'framer-motion'; // استيراد motion
 import 'swiper/css';
 import 'swiper/css/navigation';
-import './SavedProperties.css'; // تأكد من وجود ملف CSS المناسب
+import './SavedPropertiesPage.css'; // تأكد من وجود ملف CSS المناسب
 import api from '../API/api'; // تأكد من المسار الصحيح لـ API
 import { useSelector } from 'react-redux';
 
@@ -170,7 +170,7 @@ const SavedPropertiesPage = () => {
   // --- العرض الرئيسي للصفحة ---
   return (
     <motion.section
-        className="saved-properties-page py-5 bg-light" // تعديل اسم الكلاس ليكون أوضح
+        className="saved-properties-page py-5  container" // تعديل اسم الكلاس ليكون أوضح
         dir="rtl"
         variants={pageVariants}
         initial="hidden"
@@ -179,11 +179,11 @@ const SavedPropertiesPage = () => {
       {/* تم إزالة container من الـ section */}
       <Container>
         {/* --- ترويسة الصفحة --- */}
-        <div className="d-flex align-items-center mb-4 pb-2 border-bottom">
+        <div className="d-flex align-items-center mb-4 pb-2 border-bottom bg-light">
             <Button variant="light" onClick={() => navigate(-1)} className="me-3 border shadow-sm rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style={{ width: '35px', height: '35px' }}>
                 <FaArrowLeft />
             </Button>
-            <h1 className="mb-0 h2 fw-bold">العقارات المحفوظة ({savedPropertiesData.length})</h1>
+            <h1 className="mb-0 h2 fw-bold ">العقارات المحفوظة ({savedPropertiesData.length})</h1>
         </div>
         {/* -------------------- */}
 

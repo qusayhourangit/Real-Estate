@@ -199,8 +199,8 @@ const PropertyListingsPage = () => {
                 <Form.Label>نوع العقار</Form.Label>
                 <Form.Select name="type" value={filters.type} onChange={handleFilterChange}>
                   <option value="any">الكل</option>
-                  <option value="house">سكني</option>
-                  <option value="commercial">تجاري</option>
+                  <option value="house">شقة</option>
+                  <option value="commercial">محل تجاري</option>
                 </Form.Select>
               </Form.Group>
               {(filters.type === 'any' || filters.type === 'house') && (

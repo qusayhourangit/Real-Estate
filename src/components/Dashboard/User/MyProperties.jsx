@@ -52,8 +52,8 @@ const MyProperties = () => {
     fetchMyProperties();
   }, [pageNumber]);
 
-  const handleEdit = (propertyId) => {
-    navigate(`/addproperty/${propertyId}`);
+  const handleEdit = (property) => {
+    navigate(`/addproperty/${property.id}`, { state: { property } });
   };
 
   const handleDelete = async (propertyId) => {

@@ -1,9 +1,9 @@
 /* SavedProperties.css */
 
 .saved-properties-page {
-  background-color: #f8f9fa; /* لون خلفية الصفحة */
   min-height: 100vh;
-}
+  margin-top: 45px !important;
+  border-radius: 32px !important;}
 
 .saved-properties-container {
   padding: 20px 0; /* مسافة داخلية لحاوية السلايدر */

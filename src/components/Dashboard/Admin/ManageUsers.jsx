@@ -69,8 +69,8 @@ const ManageUsers = () => {
     const isBlocking = currentStatus === 'active';
     const action = isBlocking ? 'حظر' : 'إلغاء حظر';
     const endpoint = isBlocking
-      ? `/admin/ban-user/${userId}`
-      : `/admin/accept-pending-property/${userId}`; // حسب ما ذكرت
+    ? `/admin/ban-user/${userId}`
+    : `/admin/unban-user/${userId}`; // ✅ الرابط الصحيح لفك الحظر
 
     if (!window.confirm(`هل أنت متأكد من ${action} المستخدم #${userId}؟`)) return;
 

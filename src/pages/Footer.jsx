@@ -107,7 +107,7 @@ const Footer = () => {
               <li><Link to="/">الرئيسية</Link></li>
               <li><Link to="/properties">تصفح العقارات</Link></li>
               <li><Link to="/dashboard/saved">المحفوظات</Link></li> {/* مسار الداشبورد للمحفوظات */}
-              <li><Link to="/add-property">إضافة عقار</Link></li> {/* توحيد المسار */}
+              <li><Link to="/addproperty">إضافة عقار</Link></li> {/* توحيد المسار */}
             </ul>
           </motion.div>
 

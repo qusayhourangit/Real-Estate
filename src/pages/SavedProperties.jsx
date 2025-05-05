@@ -1,145 +1,170 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react'; // استيراد useRef
 import { useNavigate, Link } from 'react-router-dom';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // استيراد أيقونات الأسهم
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
-import { Spinner, Button, Container, Row, Col, Card, Badge, Alert } from 'react-bootstrap'; // استيراد Alert
+import { Spinner, Button, Container, Row, Col, Card, Badge, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import 'swiper/css';
-import 'swiper/css/navigation';
+import 'swiper/css/navigation'; // للأساسيات أو الأزرار الافتراضية
 import './SavedProperties.css'; // تأكد من استيراد ملف CSS
-import api from '../API/api';
-import { useSelector } from 'react-redux';
+import api from '../API/api'; // تأكد من المسار الصحيح
+import { useSelector } from 'react-redux'; // <-- 1. استخدام useSelector من Redux
 
-// --- Variants للأنيميشن (تبقى كما هي) ---
+// --- Variants للأنيميشن ---
 const promptVariants = { hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } } };
 const savedContainerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, when: "beforeChildren" } } };
 const savedItemVariants = { hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 12 } } };
 // ----------------------
 
-// --- دوال الألوان (تبقى كما هي) ---
-const getDealTypeColor = (type) => { /* ... */ };
-const getPropertyTypeColor = (category) => { /* ... */ };
-const getTypeArabic = (type) => { /* ... */ };
-const getCategoryArabic = (category) => { /* ... */ };
-// -----------------------------------
+// --- دوال الألوان والترجمة والتنسيق ---
+const getDealTypeColor = (type) => {
+    switch (type?.toLowerCase()) {
+        case 'rent': return 'success';
+        case 'sale': return 'danger';
+        default: return 'secondary';
+    }
+};
+const getPropertyTypeColor = (category) => {
+     switch (category?.toLowerCase()) {
+        case 'commercial': return 'warning';
+        case 'house': return 'info';
+        default: return 'secondary';
+    }
+};
+const getTypeArabic = (type) => type === 'rent' ? 'للإيجار' : (type === 'sale' ? 'للبيع' : type);
+const getCategoryArabic = (category) => category === 'commercial' ? 'تجاري' : (category === 'house' ? 'سكني' : category);
+const formatPrice = (price) => {
+    if (price === null || typeof price === 'undefined') return "السعر غير محدد";
+    const num = Number(String(price).replace(/[^0-9.-]+/g,""));
+    if (isNaN(num)) return String(price);
+    return num.toLocaleString('ar-SY', { style: 'currency', currency: 'SYP', minimumFractionDigits: 0 });
+};
+// ------------------------------------
 
 const SavedProperties = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-  
+  // --- 2. جلب الحالة من Redux ---
+  const { isAuthenticated, user, token } = useSelector((state) => state.auth);
+  // افترض أن حالة Redux لديك تحتوي على slice اسمه 'auth' وبه هذه القيم
+  // -----------------------------
 
-  // --- State لإدارة البيانات والتحميل والخطأ ---
-  const [savedPropertiesData, setSavedPropertiesData] = useState([]); // لتخزين بيانات العقارات المحفوظة
-  const [savedPropertyIds, setSavedPropertyIds] = useState([]);     // لتخزين IDs المحفوظة (لتحديث زر القلب بسرعة)
-  const [loading, setLoading] = useState(false); // لا نبدأ التحميل إلا إذا كان المستخدم مسجلًا
+  // --- State ---
+  const [savedPropertiesData, setSavedPropertiesData] = useState([]);
+  const [savedPropertyIds, setSavedPropertyIds] = useState(new Set());
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // ------------------------------------------
+  const [savingStates, setSavingStates] = useState({});
+  // ------------
 
-  // --- useEffect لجلب العقارات المحفوظة من API ---
+  // Refs لأزرار التنقل المخصصة
+  const navigationPrevRef = useRef(null);
+  const navigationNextRef = useRef(null);
+
+  // --- جلب IDs المحفوظة (باستخدام token من Redux) ---
+  const fetchSavedPropertyIds = useCallback(async () => {
+    // الاعتماد على isAuthenticated و token من Redux
+    if (!isAuthenticated || !token) {
+      setSavedPropertyIds(new Set());
+      setSavedPropertiesData([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    console.log("SavedProperties (Home): Fetching saved properties data...");
+    try {
+      const response = await api.get(`user/show-saved-property`, {
+        headers: { Authorization: `Bearer ${token}` } // استخدام token من Redux
+      });
+      console.log("SavedProperties (Home): API Response:", response.data);
+      let dataToSet = [];
+      let idsToSet = new Set();
+      if (response.data && response.data.data && Array.isArray(response.data.data.properties)) {
+          dataToSet = response.data.data.properties;
+          idsToSet = new Set(dataToSet.map(savedItem => savedItem.property?.id).filter(id => id != null));
+          console.log("SavedProperties (Home): Extracted saved IDs:", idsToSet);
+      } else {
+          console.warn("SavedProperties (Home): Could not find 'properties' array.");
+      }
+      setSavedPropertiesData(dataToSet);
+      setSavedPropertyIds(idsToSet);
+    } catch (err) {
+        console.error('Error fetching saved properties:', err.response?.data || err.message);
+        setSavedPropertiesData([]);
+        setSavedPropertyIds(new Set());
+    } finally {
+        setLoading(false);
+        console.log("SavedProperties (Home): Fetching finished.");
+    }
+  }, [isAuthenticated, token]); // الاعتماد على قيم Redux
+
   useEffect(() => {
-    // لا تقم بالجلب إلا إذا كان المستخدم مسجلاً ولديه ID
-    if (!isAuthenticated || !user?.id) {
-      setSavedPropertiesData([]); // أفرغ البيانات إذا لم يكن مسجلاً
-      setLoading(false);
+    fetchSavedPropertyIds();
+  }, [fetchSavedPropertyIds]);
+  // ----------------------------------------------------
+
+  // --- إضافة/إزالة من المفضلة (باستخدام token من Redux) ---
+  const handleToggleFavorite = async (e, propertyId) => {
+    e.stopPropagation();
+    // الاعتماد على isAuthenticated و token من Redux
+    if (!isAuthenticated || !token || !propertyId) {
+      navigate('/login');
       return;
     }
 
-    const fetchSavedProperties = async () => {
-       setLoading(true);
-       setError(null);
-       try {
-           // !!! ====> استبدل هذا بالمسار الصحيح لـ API جلب المحفوظات <==== !!!
-           // يفترض أن المسار يتضمن ID المستخدم
-           // !!! ======================================================= !!!
+    const isCurrentlySaved = savedPropertyIds.has(propertyId);
+    setSavingStates(prev => ({ ...prev, [propertyId]: true }));
 
-           // افترض أن axios مهيأ لإرسال التوكن من AuthContext
-           const response = await api.get(`/user/show-saved-property/${user.id}`
-           , {
-            headers: {
-              Authorization: `Bearer ${user.token}` // إذا كنت تستخدم توكن مصادقة.
-            }});
+    const newIdsSet = new Set(savedPropertyIds);
+    if (isCurrentlySaved) newIdsSet.delete(propertyId);
+    else newIdsSet.add(propertyId);
+    setSavedPropertyIds(newIdsSet);
 
-           // التحقق من صحة الاستجابة
-           if (response.data && Array.isArray(response.data)) {
-                // افتراض أن الـ API يرجع مصفوفة بكائنات العقارات المحفوظة مباشرة
-                setSavedPropertiesData(response.data);
-                // تحديث قائمة IDs المحلية للتأكد من تطابقها مع الخادم
-                const serverSavedIds = response.data.map(p => p.id);
-                setSavedPropertyIds(serverSavedIds);
-                // (اختياري) تحديث localStorage ليكون متزامنًا مع الخادم
-                localStorage.setItem(`savedProperties_${user.id}`, JSON.stringify(serverSavedIds));
-            } else {
-                console.warn("Saved properties API response is not a valid array:", response.data);
-                setSavedPropertiesData([]);
-                setSavedPropertyIds([]);
-                // setError("فشل تحميل المحفوظات: تنسيق غير متوقع.");
-            }
+     if (isCurrentlySaved) {
+        setSavedPropertiesData(prevData => prevData.filter(savedItem => savedItem.property?.id !== propertyId));
+     } else {
+        console.log("Property added to favorites, UI update for data might require re-fetch.");
+     }
 
-       } catch (error) {
-         console.error('Error fetching saved properties:', error);
-         // عرض خطأ أكثر تحديدًا للمستخدم
-         setError(`فشل تحميل العقارات المحفوظة. (${error.response?.data?.message || error.message})`);
-         setSavedPropertiesData([]);
-         setSavedPropertyIds([]);
-       } finally {
-         setLoading(false);
-       }
-     };
-
-    fetchSavedProperties();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user]); // إعادة الجلب عند تغير المستخدم أو حالة المصادقة
-  // --------------------------------------------------------------------
-
-  // --- handleRemoveFromSaved (يجب إضافة API call هنا) ---
-  const handleRemoveFromSaved = async (propertyIdToRemove) => { // جعلها async
-    if (!isAuthenticated || !user?.id) return; // تأكيد إضافي
-
-    const originalSavedIds = [...savedPropertyIds]; // حفظ الحالة الأصلية للتراجع عند الخطأ
-
-    // 1. تحديث الواجهة فورًا لتجربة مستخدم أفضل
-    const updatedIds = savedPropertyIds.filter(id => id !== propertyIdToRemove);
-    setSavedPropertyIds(updatedIds);
-    // (اختياري) تحديث البيانات المعروضة فورًا أيضًا
-    setSavedPropertiesData(prevData => prevData.filter(p => p.id !== propertyIdToRemove));
-    localStorage.setItem(`savedProperties_${user.id}`, JSON.stringify(updatedIds));
-
-    // 2. إرسال طلب للـ API لحذفها من الخادم
     try {
-        // !!! ====> استبدل هذا بالمسار الصحيح لـ API حذف المفضلة <==== !!!
-        // قد يكون DELETE /api/user/favorites/{propertyId}
-        // أو POST /api/user/favorites/remove { propertyId }
-        await api.delete(`/user/deleteProperty/${propertyId}`); // افتراض استخدام DELETE
-        // !!! ======================================================= !!!
-        console.log(`Property ${propertyId} removed from favorites on server.`);
-        // لا حاجة لتحديث الحالة هنا لأنها حدثت بالفعل
-
-    } catch (error) {
-        console.error("Error removing property from favorites:", error);
-        // 3. في حالة فشل الـ API، قم بالتراجع عن التغيير في الواجهة
-        alert("حدث خطأ أثناء إزالة العقار من المفضلة. حاول مرة أخرى.");
-        setSavedPropertyIds(originalSavedIds); // استعادة IDs الأصلية
-        localStorage.setItem(`savedProperties_${user.id}`, JSON.stringify(originalSavedIds));
-        // (اختياري) إعادة جلب البيانات من الخادم لضمان التزامن
-        // fetchSavedProperties(); // أو إعادة جلب البيانات التي كانت معروضة
-        setSavedPropertiesData(prevData => {
-             // إعادة إضافة العنصر المحذوف (يتطلب البحث في allProperties أو إعادة الجلب)
-             // هذا الجزء قد يكون معقدًا، إعادة الجلب قد تكون أسهل
-             return prevData; // حاليًا لا نعيد العنصر للبيانات المعروضة عند الفشل
-        });
+      const config = { headers: { Authorization: `Bearer ${token}` } }; // استخدام token من Redux
+      if (isCurrentlySaved) {
+        await api.delete(`user/remove-saved-property/${propertyId}`, config);
+      } else {
+        await api.post(`user/saved-property/${propertyId}`, {}, config);
+      }
+    } catch (err) {
+      console.error('Error toggling favorite status:', err.response?.data || err.message);
+      setSavedPropertyIds(prev => {
+          const revertedSet = new Set(prev);
+          if (isCurrentlySaved) revertedSet.add(propertyId);
+          else revertedSet.delete(propertyId);
+          return revertedSet;
+      });
+       await fetchSavedPropertyIds(); // إعادة الجلب عند الخطأ
+      alert('حدث خطأ أثناء تحديث حالة المفضلة.');
+    } finally {
+       setSavingStates(prev => ({ ...prev, [propertyId]: false }));
     }
-};
+  };
+  // --------------------------------------------------
 
-  // --- handlePropertyClick (تبقى كما هي) ---
+  // --- النقر على الكارد ---
   const handlePropertyClick = (propertyId) => { navigate(`/property/${propertyId}`); };
-  // -----------------------------------
+  // ----------------------
 
-  // --- العرض للمستخدم غير المسجل (يبقى كما هو مع الأنيميشن) ---
+  // --- 1. العرض للمستخدم غير المسجل (يعتمد على isAuthenticated من Redux) ---
   if (!isAuthenticated) {
     return (
-      <motion.section /* ... قسم الدعوة ... */ >
-        {/* ... محتوى قسم الدعوة ... */}
+      <motion.section
+        className="saved-prompt-section py-5 container "
+        dir="rtl"
+        style={{ background: '#fcfaf7' }}
+        variants={promptVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
          <Container className="py-4">
           <Row className="justify-content-center text-center">
             <Col md={9} lg={7}>
@@ -160,34 +185,25 @@ const SavedProperties = () => {
       </motion.section>
     );
   }
-  // -----------------------------------------------------
+  // -------------------------------------------------------------------
 
-  // --- العرض للمستخدم المسجل ---
+  // --- 2. العرض للمستخدم المسجل ---
 
-  // عرض التحميل إذا كان المستخدم مسجلاً ونحن نجلب البيانات
-  if (loading && isAuthenticated) {
-     return <div className="text-center py-5"><Spinner animation="border" style={{ color: '#d6762e' }} /></div>;
+  // عرض التحميل
+  if (loading) {
+     return (
+        <div className="text-center py-5" style={{minHeight: '300px'}}>
+            <Spinner animation="border" style={{ color: '#d6762e' }} />
+             <p className="mt-2 text-muted small">تحميل المحفوظات...</p>
+        </div>
+     );
   }
 
-   // عرض القسم فقط إذا كان المستخدم مسجلًا، وانتهى التحميل، ولا يوجد خطأ
-   if (isAuthenticated && !loading && !error) {
-        // عرض رسالة إذا لا توجد عقارات محفوظة
-        if (savedPropertiesData.length === 0) {
-            return (
-                 <Container className="text-center py-5 my-4">
-                    <i className="bi bi-bookmarks fs-1 text-muted mb-3 d-block"></i>
-                    <p className="lead text-muted">لا توجد عقارات محفوظة في قائمتك بعد.</p>
-                    <Button variant="outline-primary" onClick={() => navigate('/properties')} style={{ color: '#d6762e', borderColor: '#d6762e' }}>
-                        <i className="bi bi-search me-2"></i> تصفح العقارات الآن
-                    </Button>
-                 </Container>
-            );
-        }
-
-      // عرض السلايدر إذا وجدت عقارات محفوظة
+   // عرض القسم فقط إذا انتهى التحميل، لا يوجد خطأ، وهناك بيانات
+   if (!loading && !error && savedPropertiesData.length > 0) {
       return (
         <motion.section
-            className="saved-properties py-5"
+            className="saved-properties py-5 container"
             dir="rtl"
             style={{ background: '#fcfaf7' }}
             variants={savedContainerVariants}
@@ -195,17 +211,41 @@ const SavedProperties = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
         >
-          <Container className="py-lg-4">
-             <motion.h2 className="mb-5 text-center fw-bold section-title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} >
-                <i className="bi bi-bookmark-star-fill text-primary me-2"></i> محفوظاتك
-            </motion.h2>
+          <Container className="py-lg-4 position-relative">
+             <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay: 0.1}}>
+                 <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="section-title mb-0">
+                        <i className="bi bi-bookmark-star-fill text-primary me-2"></i> محفوظاتك الأخيرة
+                    </h2>
+                    <Link to="/dashboard/saved" className="btn btn-outline-primary btn-sm" style={{color: '#d6762e', borderColor: '#d6762e'}}>
+                        عرض الكل ({savedPropertiesData.length}) <i className="bi bi-arrow-left-short"></i>
+                    </Link>
+                 </div>
+            </motion.div>
 
-            <div className="saved-properties-container position-relative">
+            <div className="saved-properties-container">
+               {/* --- أزرار التنقل المخصصة --- */}
+               {savedPropertiesData.length > 4 && (
+                   <div className="swiper-nav-btns saved-nav-home">
+                        <button ref={navigationPrevRef} className="custom-swiper-button-prev shadow-sm"><FaChevronRight /></button>
+                        <button ref={navigationNextRef} className="custom-swiper-button-next shadow-sm"><FaChevronLeft /></button>
+                   </div>
+               )}
+               {/* ---------------------------- */}
+
               <Swiper
                  modules={[Navigation]}
-                 spaceBetween={20} // إعادة للمسافة الأصلية
+                 spaceBetween={20}
                  slidesPerView={1}
-                 navigation // استخدام الأزرار الافتراضية
+                 navigation={{ // ربط الأزرار المخصصة
+                    prevEl: navigationPrevRef.current,
+                    nextEl: navigationNextRef.current,
+                 }}
+                 onBeforeInit={(swiper) => {
+                     swiper.params.navigation.prevEl = navigationPrevRef.current;
+                     swiper.params.navigation.nextEl = navigationNextRef.current;
+                     swiper.navigation.update();
+                 }}
                  breakpoints={{
                    576: { slidesPerView: 2 },
                    992: { slidesPerView: 3 },
@@ -213,32 +253,57 @@ const SavedProperties = () => {
                  }}
                  className="pb-4"
               >
-                {savedPropertiesData.map((property) => ( // استخدام savedPropertiesData هنا
-                   <SwiperSlide key={property.id} className="h-auto">
-                      <motion.div variants={savedItemVariants} className="h-100">
-                        <Card className="property-card h-100 shadow-sm border-0 overflow-hidden" onClick={() => handlePropertyClick(property.id)} style={{ cursor: 'pointer' }}>
-                            <div className="property-image-wrapper">
-                                <Card.Img variant="top" src={property.images && property.images.length > 0 ? property.images[0] : 'https://via.placeholder.com/400x250?text=No+Image'} alt={property.title || 'صورة عقار'} className="property-image" loading="lazy" onError={(e) => { /*...*/ }}/>
-                                <div className="property-tags">
-                                    {property.type && (<Badge pill bg="" className="tag-deal" style={{ backgroundColor: getDealTypeColor(property.type) }}>{getTypeArabic(property.type)}</Badge>)}
-                                    {property.category && (<Badge pill bg="" className="tag-category" style={{ backgroundColor: getPropertyTypeColor(property.category) }}>{getCategoryArabic(property.category)}</Badge>)}
+                {savedPropertiesData.map((savedItem) => {
+                   if (!savedItem.property) return null;
+                   const property = savedItem.property;
+                   const propertyId = property.id;
+
+                   return (
+                       <SwiperSlide key={savedItem.id} className="h-auto d-flex">
+                          <motion.div variants={savedItemVariants} className="h-100 w-100 ">
+                            <Card className="property-card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column" onClick={() => handlePropertyClick(propertyId)} style={{ cursor: 'pointer' }} whileHover={{ y: -5 }}>
+                                <div className="property-image-wrapper position-relative">
+                                    <Card.Img variant="top"
+                                        src={
+                                            property.images && property.images.length > 0 && property.images[0]?.image
+                                            ? `${api.defaults.baseURL}/storage/${property.images[0].image}`
+                                            : property.main_image
+                                            ? `${api.defaults.baseURL}/storage/${property.main_image}`
+                                            : property.image
+                                            ? `${api.defaults.baseURL}/storage/${property.image}`
+                                            : 'https://via.placeholder.com/400x250?text=No+Image'
+                                        }
+                                        alt={property.title || 'صورة عقار'} className="property-image" loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/400x250?text=No+Image'; }}/>
+                                    <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
+                                        {property.purpose && (<Badge pill bg={getDealTypeColor(property.purpose)} className="px-2 small fw-semibold">{getTypeArabic(property.purpose)}</Badge>)}
+                                        {property.type && (<Badge pill bg={getPropertyTypeColor(property.type)} className="px-2 small fw-semibold">{getCategoryArabic(property.type)}</Badge>)}
+                                    </div>
+                                    <Button
+                                        variant="light"
+                                        className="position-absolute top-0 start-0 m-2 rounded-circle p-0 d-flex align-items-center justify-content-center shadow"
+                                        style={{ zIndex: 10, width: '35px', height: '35px', fontSize: '1rem' }}
+                                        onClick={(e) => handleToggleFavorite(e, propertyId)}
+                                        disabled={savingStates[propertyId]}
+                                        title={savedPropertyIds.has(propertyId) ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+                                    >
+                                      {savingStates[propertyId] ? (<Spinner animation="border" size="sm" variant="secondary" />)
+                                        : savedPropertyIds.has(propertyId) ? (<FaHeart style={{ color: '#d6762e' }} />)
+                                        : (<FaRegHeart style={{ color: '#6c757d' }}/>)
+                                      }
+                                    </Button>
                                 </div>
-                                <Button variant={'danger'} size="sm" className={`favorite-btn shadow-sm active`} onClick={(e) => handleRemoveFromSaved(property.id)} title="إزالة من المفضلة">
-                                    <FaHeart /> {/* دائمًا قلب ممتلئ لأنها محفوظة */}
-                                </Button>
-                            </div>
-                            <Card.Body className="d-flex flex-column p-3">
-                                <div className="property-card-price fw-bold fs-5 mb-1">{property.price || "السعر غير محدد"}</div>
-                                <h5 className="property-card-title mb-1 text-truncate">{property.title || "عنوان غير متوفر"}</h5>
-                                {/* يمكن عرض الوصف هنا إذا كان قصيرًا */}
-                                {/* <p className="property-card-description text-muted small mb-0 text-truncate">{property.description || "لا يوجد وصف"}</p> */}
-                                {/* أو العنوان */}
-                                <p className="property-card-address text-muted small mb-0 text-truncate"><i className="bi bi-geo-alt-fill me-1"></i>{property.address || "العنوان غير متوفر"}</p>
-                            </Card.Body>
-                        </Card>
-                      </motion.div>
-                    </SwiperSlide>
-                ))}
+                                <Card.Body className="d-flex flex-column p-3 flex-grow-1">
+                                    <div className="property-card-price fw-bold fs-5 mb-1">{formatPrice(property.price)}</div>
+                                    <h5 className="property-card-title mb-1 text-truncate">
+                                        <Link to={`/property/${propertyId}`} onClick={(e) => e.stopPropagation()} className="text-dark text-decoration-none stretched-link">{property.title || "عنوان غير متوفر"}</Link>
+                                    </h5>
+                                    <p className="property-card-address text-muted small mb-0 mt-auto text-truncate"><i className="bi bi-geo-alt-fill me-1"></i>{property.address || "العنوان غير متوفر"}</p>
+                                </Card.Body>
+                            </Card>
+                          </motion.div>
+                        </SwiperSlide>
+                   );
+                })}
               </Swiper>
             </div>
           </Container>
@@ -246,16 +311,25 @@ const SavedProperties = () => {
       );
    }
 
-   // عرض الخطأ إذا كان المستخدم مسجلاً وانتهى التحميل ووجد خطأ
+   // عرض رسالة خطأ للمستخدم المسجل
    if (isAuthenticated && !loading && error) {
        return (
-           <Container className="my-5">
-                <Alert variant="danger" className="text-center"> <i className="bi bi-exclamation-triangle-fill me-2"></i> {error} </Alert>
+           <Container className="my-4 text-center">
+                <Alert variant="light" className="d-inline-block border small p-2 text-danger"> <i className="bi bi-exclamation-triangle text-danger me-1"></i> خطأ في تحميل المحفوظات. </Alert>
            </Container>
        );
    }
 
-   // حالة افتراضية (لا يُفترض الوصول لها كثيرًا)
+    // إذا كان مسجلاً وانتهى التحميل ولا يوجد خطأ ولا توجد بيانات
+    if (isAuthenticated && !loading && !error && savedPropertiesData.length === 0) {
+       return (
+           <Container className="my-4 text-center">
+                <p className="text-muted small"> <i className="bi bi-info-circle me-1"></i> لا توجد عناصر محفوظة لعرضها هنا. </p>
+           </Container>
+       );
+   }
+
+   // حالة افتراضية أخيرة
    return null;
 };
 

@@ -30,7 +30,7 @@ const schema = z.object({
   price: z.string().min(1, 'الرجاء إدخال السعر'),
   area: z.string().min(1, 'الرجاء إدخال المساحة'),
   phone: z.string().min(9, 'الرجاء إدخال رقم هاتف صحيح').regex(/^09\d{8}$/, 'صيغة الرقم غير صحيحة (يجب أن يبدأ بـ 09 ويتكون من 10 أرقام)'),
-  address: z.string().min(1, 'الرجاء إدخال عنوان تفصيلي للبحث'),
+  address: z.string().min(3, "الرجاء إدخال عنوان صحيح"),
 });
 
 // --- Variants للأنيميشن ---
@@ -113,7 +113,7 @@ export default function AddPropertyForm({ onSubmissionSuccess }) {
       const firstResult = response.data[0];
       const newPos = [parseFloat(firstResult.lat), parseFloat(firstResult.lon)];
       setPosition(newPos);
-      setValue('address', firstResult.display_name);
+      setValue( firstResult.display_name);
       setSearchResults(response.data);
       setError(null);
       if (mapRef.current) {
@@ -136,7 +136,6 @@ export default function AddPropertyForm({ onSubmissionSuccess }) {
         }
       },
     });
-    // ... (بقية الكود كما هو)
     return position ? <Marker position={position}></Marker> : null;
   }
 
@@ -186,12 +185,20 @@ export default function AddPropertyForm({ onSubmissionSuccess }) {
     formData.append('location_lat', position[0]);
     formData.append('location_lon', position[1]);
     formData.append('user_id', user.id);
+    formData.append('address', data.address); // ✅ إرسال العنوان
+
 
     if (data.type === 'house') {
       formData.append('bedrooms', bedrooms);
       formData.append('bathrooms', bathrooms);
       formData.append('livingRooms', livingRooms);
       formData.append('balconies', balconies);
+    } else {
+      // ضروري تبعت قيم افتراضية أو فارغة مفهومة من Laravel
+      formData.append('bedrooms', '0');
+      formData.append('bathrooms', '0');
+      formData.append('livingRooms', '0');
+      formData.append('balconies', '0');
     }
 
     files.forEach((file) => {
@@ -210,8 +217,13 @@ export default function AddPropertyForm({ onSubmissionSuccess }) {
       if (onSubmissionSuccess) {
         onSubmissionSuccess();
       }
-      navigate('/dashboard/my-properties');
-    } catch (error) {
+      navigate('/', {
+        state: {
+          successMessage: "✅ تم إضافة العقار بنجاح، بانتظار قبوله من المسؤولين.",
+          replace: true // هذا يمنع حفظ الـ state في التاريخ (history)
+
+        }
+      });    } catch (error) {
       console.error('خطأ في إضافة العقار:', error.response?.data || error);
       setError(error.response?.data?.message || 'حدث خطأ أثناء إضافة العقار');
     } finally {
@@ -252,6 +264,17 @@ export default function AddPropertyForm({ onSubmissionSuccess }) {
         <div className="form-grid">
           {/* --- قسم الخريطة (تطبيق Variants) --- */}
           <motion.div className="map-section" variants={sectionVariants}>
+          <div className="mb-3">
+  <label htmlFor="address" className="form-label">العنوان</label>
+  <input
+    type="text"
+    className="form-control"
+    id="address"
+    {...register("address")}
+    placeholder="مثلاً: دمشق، المزة"
+  />
+  {errors.address && <div className="text-danger">{errors.address.message}</div>}
+</div>
             {/* البحث عن العنوان */}
             <div className="form-group">
               <label htmlFor="address"><i className="bi bi-geo-alt-fill"></i> البحث عن العنوان / المنطقة</label>

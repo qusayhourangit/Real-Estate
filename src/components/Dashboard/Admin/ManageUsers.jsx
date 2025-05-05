@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback , useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Table, Button, Spinner, Alert, Badge, Form } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -23,14 +23,13 @@ const ManageUsers = () => {
   const { token } = useSelector((state) => state.auth);
   const fetchController = useRef(null);
 
-  // تحسين fetchUsers باستخدام useCallback
   const fetchUsers = useCallback(async (currentSearchTerm) => {
     try {
       if (fetchController.current) {
         fetchController.current.abort();
       }
+
       fetchController.current = new AbortController();
-      
       setLoading(true);
       setError(null);
 
@@ -39,7 +38,6 @@ const ManageUsers = () => {
         signal: fetchController.current.signal
       });
 
-      // التعديل الرئيسي هنا: التأكد من أن البيانات مصفوفة
       const usersData = Array.isArray(response.data?.data) ? response.data.data : [];
       setUsers(usersData);
 
@@ -52,7 +50,7 @@ const ManageUsers = () => {
       setLoading(false);
       fetchController.current = null;
     }
-  }, [token]); // إزالة users.length من التبعيات
+  }, [token]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -68,27 +66,30 @@ const ManageUsers = () => {
   }, [searchTerm, fetchUsers]);
 
   const handleToggleBlock = async (userId, currentStatus) => {
-    const action = currentStatus === 'active' ? 'حظر' : 'إلغاء حظر';
-    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-    
+    const isBlocking = currentStatus === 'active';
+    const action = isBlocking ? 'حظر' : 'إلغاء حظر';
+    const endpoint = isBlocking
+      ? `/admin/ban-user/${userId}`
+      : `/admin/accept-pending-property/${userId}`; // حسب ما ذكرت
+
     if (!window.confirm(`هل أنت متأكد من ${action} المستخدم #${userId}؟`)) return;
 
     try {
-      await api.patch(`/admin/users/${userId}/status`, 
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.patch(endpoint, null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const newStatus = isBlocking ? 'blocked' : 'active';
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId ? { ...user, status: newStatus } : user
+        )
       );
-      
-      setUsers(prev => prev.map(user => 
-        user.id === userId ? { ...user, status: newStatus } : user
-      ));
-      
     } catch (err) {
       alert(`حدث خطأ أثناء ${action} المستخدم: ${err.message}`);
     }
   };
 
-  // دوال مساعدة
   const getStatusBadgeVariant = (status) => status === 'active' ? 'success' : 'danger';
   const getStatusText = (status) => status === 'active' ? 'نشط' : 'محظور';
   const getToggleButtonVariant = (status) => status === 'active' ? 'danger' : 'success';
@@ -117,7 +118,7 @@ const ManageUsers = () => {
         <motion.h2 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           إدارة المستخدمين
         </motion.h2>
-        
+
         <Form.Control
           type="search"
           placeholder="ابحث بالاسم أو البريد الإلكتروني..."
@@ -164,7 +165,7 @@ const ManageUsers = () => {
                       {getStatusText(user.status)}
                     </Badge>
                   </td>
-                  <td>{new Date(user.createdAt).toLocaleDateString('ar-SY')}</td>
+                  <td>{new Date(user.created_at).toLocaleDateString('ar-SY')}</td>
                   <td>
                     {user.role !== 'admin' && (
                       <Button
@@ -172,8 +173,7 @@ const ManageUsers = () => {
                         size="sm"
                         onClick={() => handleToggleBlock(user.id, user.status)}
                       >
-                        <i className={`bi ${user.status === 'active' ? 'bi-slash-circle' : 'bi-check-circle'}`}></i>
-                        {' '}
+                        <i className={`bi ${user.status === 'active' ? 'bi-slash-circle' : 'bi-check-circle'}`}></i>{' '}
                         {user.status === 'active' ? 'حظر' : 'تفعيل'}
                       </Button>
                     )}

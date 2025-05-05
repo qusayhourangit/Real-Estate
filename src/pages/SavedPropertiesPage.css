@@ -1,164 +1,195 @@
+/* SavedProperties.css */
+
 .saved-properties-page {
-    background-color: #f8f9fa;
-    min-height: 100vh;
-  }
-  
-  .saved-properties-container {
-    padding: 20px 0;
-  }
-  
-  .property-card {
-    background: #f6f1eb;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
-    height: 100%;
-  }
-  
-  .property-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .property-image {
-    height: 200px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-  }
-  
-  .property-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  .property-card:hover .property-image img {
-    transform: scale(1.05);
-  }
-  
-  .property-details {
-    padding: 1.2rem;
-  }
-  
-  .price {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #e38e49;
-    margin-bottom: 0.5rem;
-  }
-  
-  .title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  
-  .address {
-    font-size: 0.85rem;
-    color: #6c757d;
-    line-height: 1.5;
-  }
-  
-  .favorite-btn {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: rgba(255, 255, 255, 0.8);
-    border: none;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ff4757;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 2;
-  }
-  
-  .favorite-btn:hover {
-    transform: scale(1.1);
-    background: rgba(255, 71, 87, 0.2);
-  }
-  
-  .empty-state {
-    text-align: center;
-    padding: 50px 0;
-  }
-  
-  @media (max-width: 768px) {
-    .property-image {
-      height: 180px;
-    }
-    
-    .price {
-      font-size: 2.5rem;
-      color: #d6762e !important;
-    }
-    
-    .title {
-      font-size: 1rem;
-    }
-  }
-   /* علامات العقار */
-.property-tag {
-  position: absolute;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  z-index: 2;
+  background-color: #f8f9fa; /* لون خلفية الصفحة */
+  min-height: 100vh;
 }
 
-.sale-rent-tag {
-  top: 15px;
-  right: 15px;
-  background-color: #CF0F47; /* لون أزرق */
+.saved-properties-container {
+  padding: 20px 0; /* مسافة داخلية لحاوية السلايدر */
 }
 
-.property-type-tag {
-  top: 45px;
-  right: 15px;
-  background-color: #FFA955; /* لون أحمر */
+/* --- تنسيق الكارد الرئيسي --- */
+.property-card {
+  background: #ffffff; /* تغيير الخلفية للأبيض أو لون أفتح */
+  border-radius: 15px !important; /* حواف أكثر دائرية */
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* ظل أنعم */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* --- مهم جدًا لملء ارتفاع السلايد --- */
+  display: flex; /* التأكد من أنها flex */
+  flex-direction: column; /* التأكد من أنها عمودية */
 }
 
-/* التأكد من أن العلامات لا تتداخل مع زر المفضلة */
+.property-card:hover {
+  transform: translateY(-6px); /* رفع عند المرور */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* --- تنسيق حاوية الصورة --- */
 .property-image {
+  height: 200px; /* --- تحديد ارتفاع ثابت للصورة --- */
+  overflow: hidden;
   position: relative;
+  cursor: pointer;
+  background-color: #eee; /* لون placeholder أثناء تحميل الصورة */
 }
 
-/* تعديل موقع زر المفضلة ليتناسب مع العلامات الجديدة */
-.favorite-btn {
-  top: 15px;
-  left: 15px;}
-  .commercial-tag {
-    background-color: purple;
-  }
-  
-.apartment-tag {
-    background-color: green;
-  }
-.btn-primary{
-  background: #e38e49;
-
+/* --- تنسيق الصورة نفسها --- */
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* يضمن ملء الصورة بدون تشويه */
+  transition: transform 0.4s ease;
 }
-.log-btn{
-  color: white;
-  border: 1px solid var(--main-color);
-  background: #e38e49;
-  text-decoration: none;
-  padding: 10px 10px;
-  border-radius: 6px;
+
+.property-card:hover .property-image img {
+  transform: scale(1.06); /* تكبير بسيط عند المرور */
+}
+
+/* --- تنسيق قسم التفاصيل --- */
+.property-details {
+  padding: 1rem 1.2rem; /* تعديل الحشو */
+  display: flex; /* ضروري لتطبيق flex-grow و mt-auto */
+  flex-direction: column;
+  flex-grow: 1; /* --- مهم ليملأ المساحة المتبقية --- */
+}
+
+/* --- تنسيق السعر --- */
+.price {
+  font-size: 1.25rem; /* تعديل الحجم */
+  font-weight: 700;
+  color: var(--main-color, #e38e49); /* استخدام متغير اللون */
+  margin-bottom: 0.4rem; /* تعديل الهامش */
+}
+
+/* --- تنسيق العنوان --- */
+.title {
+  font-size: 1.05rem; /* تعديل الحجم */
   font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.4s ease;
+  margin-bottom: 0.6rem; /* تعديل الهامش */
+  color: var(--text-dark, #333);
+  line-height: 1.4; /* تحسين قراءة العناوين الطويلة */
+  /* لجعل الرابط يأخذ لون النص */
+  a, a:visited {
+      color: inherit;
+      text-decoration: none;
+  }
+   /* خط تحت العنوان عند المرور على الكارد */
+  .property-card:hover & a {
+     color: var(--main-color, #e38e49);
+     text-decoration: underline !important;
+  }
+  .property-card & a.stretched-link::after {
+     content: none !important;
+  }
 }
-.log-btn:hover {
-  background-color: var(--main-color);
-  color: var(--text-light);
+
+
+/* --- تنسيق العنوان (النصي) --- */
+.address {
+  font-size: 0.88rem; /* تعديل الحجم */
+  color: #6c757d;
+  line-height: 1.5;
+  margin-top: auto; /* --- مهم لدفعه لأسفل الكارد --- */
 }
+.address i {
+  color: var(--main-color, #e38e49);
+  font-size: 0.9em; /* جعل الأيقونة أصغر قليلاً */
+}
+
+
+/* --- تنسيق زر المفضلة (الحذف) --- */
+.favorite-btn {
+  position: absolute;
+  top: 12px; /* تعديل المسافة */
+  left: 12px; /* تعديل الموقع لليسار */
+  background: rgba(255, 255, 255, 0.9); /* خلفية أوضح */
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc3545 !important; /* --- لون أحمر للقلب دائماً --- */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 1); /* أكثر بياضاً عند المرور */
+   box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+
+/* --- تنسيق علامات العقار (Tags) --- */
+.property-tag {
+  position: absolute; /* أبقيناها هنا لأن JSX يستخدم position-absolute */
+  padding: 0.25rem 0.6rem; /* تعديل الحشو */
+  border-radius: 50px; /* --- جعلها دائرية الحواف (pill) --- */
+  font-size: 0.7rem; /* تعديل حجم الخط */
+  font-weight: 600; /* تعديل الوزن */
+  color: white !important; /* ضمان لون النص أبيض */
+  z-index: 2;
+   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+   /* --- أزل background-color من هنا لأنها مطبقة بالـ style --- */
+}
+
+/* تموضع العلامات (افترضنا أنها في div واحد في JSX) */
+/* .sale-rent-tag { ... } */ /* لم نعد نستخدم هذا الكلاس مباشرة */
+/* .property-type-tag { ... } */ /* لم نعد نستخدم هذا الكلاس مباشرة */
+
+
+/* --- تنسيقات إضافية --- */
+.empty-state {
+  /* ... (إذا كنت تستخدمه) ... */
+}
+
+/* Media Query لتعديل حجم السعر في الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .property-image {
+    height: 180px;
+  }
+  /* --- تعديل تنسيق السعر في الشاشات الصغيرة --- */
+  .price {
+    font-size: 1.1rem; /* تصغيره قليلاً */
+    /* color: #d6762e !important; */ /* لا حاجة للون مختلف هنا بالضرورة */
+  }
+  .title {
+    font-size: 1rem;
+  }
+}
+
+/* Swiper Navigation Buttons (إذا كنت تستخدم الأزرار المخصصة) */
+.swiper-nav-btns.saved-nav .custom-swiper-button-prev,
+.swiper-nav-btns.saved-nav .custom-swiper-button-next {
+  /* ... (انسخ التنسيقات من Testimonials.css إذا كنت تستخدم الأزرار المخصصة) ... */
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   z-index: 10;
+   cursor: pointer;
+   background-color: rgba(255, 255, 255, 0.9);
+   color: var(--main-color, #e38e49);
+   border-radius: 50%;
+   width: 40px; /* تعديل الحجم إذا لزم الأمر */
+   height: 40px;
+   border: none;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 1.1rem;
+   transition: all 0.2s ease;
+   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.swiper-nav-btns.saved-nav .custom-swiper-button-prev:hover,
+.swiper-nav-btns.saved-nav .custom-swiper-button-next:hover {
+  background-color: var(--main-color, #e38e49);
+  color: white;
+}
+.swiper-nav-btns.saved-nav .custom-swiper-button-prev { left: -15px; } /* تعديل الموقع */
+.swiper-nav-btns.saved-nav .custom-swiper-button-next { right: -15px; } /* تعديل الموقع */

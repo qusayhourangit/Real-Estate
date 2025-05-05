@@ -33,6 +33,7 @@ import ManageUsers from './components/Dashboard/Admin/ManageUsers';
 import SiteStats from './components/Dashboard/Admin/SiteStats';
 import ContactUs from './pages/ContactUs';
 import AboutUs from './pages/AboutUs';
+import BestChoices from './pages/BestChoices';
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
         <Route path="/savedproperties" element={<SavedPropertiesPage />} />
         <Route path="/Contactus" element={<ContactUs />} />
         <Route path="/Aboutus" element={<AboutUs />} />
+        <Route path="/BestChoices" element={<BestChoices/>}/>
 
 
         <Route
@@ -61,7 +63,15 @@ function App() {
           <ProtectedRoute allowedRoles={['user', 'admin']}> {/* فقط المستخدم المسجل يمكنه الإضافة */}
             <AddPropertyForm />
           </ProtectedRoute>
+          
         } />
+           <Route path="/addproperty/:propertyId" element={
+          <ProtectedRoute allowedRoles={['user', 'admin']}> {/* فقط المستخدم المسجل يمكنه الإضافة */}
+            <AddPropertyForm />
+          </ProtectedRoute>
+          
+        } />
+        
         {/* مسارات المستخدم */}
         <Route
           path="/dashboard"

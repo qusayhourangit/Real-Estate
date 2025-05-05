@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate , useLocation  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Home.css'; // تأكد من استيراد ملف CSS
 import CountUp from 'react-countup';
@@ -22,7 +22,20 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchPurpose, setSearchPurpose] = useState('any'); // 'any', 'sale', 'rent'
   const navigate = useNavigate();
+  const location = useLocation();
+  const [successMessage, setSuccessMessage] = useState(null);
 
+  useEffect(() => {
+    if (location.state?.successMessage) {
+      setSuccessMessage(location.state.successMessage);
+  
+      // تنظيف الرسالة بعد عرضها
+      window.history.replaceState({}, document.title);
+      
+      const timer = setTimeout(() => setSuccessMessage(null), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
   const handleSearch = (e) => {
     e.preventDefault();
     console.log('البحث عن:', { location: searchTerm, purpose: searchPurpose });
@@ -36,6 +49,11 @@ const Home = () => {
 
   return (
     <>
+     {successMessage && (
+  <div className="success-message">
+    {successMessage}
+  </div>
+)}
       <motion.section
         className="hero-wrapper container-fluid container"
         dir="rtl"
@@ -107,7 +125,7 @@ const Home = () => {
                   className="search-button-integrated btn btn-primary fw-bold border-0"
                   title="بحث"
                 >
-                  <i class="bi bi-geo-alt-fill"></i>
+                  <i className="bi bi-geo-alt-fill"></i>
                 </button>
               </div>
               {/* --- نهاية الحاوية المدمجة --- */}

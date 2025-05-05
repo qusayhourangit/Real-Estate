@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Table, Button, Spinner, Alert, Badge } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -9,6 +9,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
+
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
@@ -19,55 +20,51 @@ const MyProperties = () => {
   const [myProperties, setMyProperties] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
   const navigate = useNavigate();
- 
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  const fetchMyProperties = useCallback(async () => {
-    if (!user?.id) {
-      setError('يجب تسجيل الدخول لعرض عقاراتك.');
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get('/user/get-property', {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        }
-      });
-      
-      // تأكد أن البيانات مصفوفة
-      const data = response.data?.data || response.data || [];
-      setMyProperties(Array.isArray(data) ? data : []);
-      
-    } catch (err) {
-      console.error(err);
-      setError('حدث خطأ أثناء تحميل عقاراتك.');
-      setMyProperties([]); // إعادة تعيين إلى مصفوفة فارغة في حالة الخطأ
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
 
   useEffect(() => {
+    const fetchMyProperties = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await api.get(`/user/getProperty?page=${pageNumber}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const properties = response.data?.data?.data || [];
+        setMyProperties(properties);
+      } catch (err) {
+        console.error("Error fetching properties:", err);
+        setError(`حدث خطأ أثناء تحميل العقارات. (${err.message})`);
+        setMyProperties([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchMyProperties();
-  }, [fetchMyProperties]);
+  }, [pageNumber]);
 
   const handleEdit = (propertyId) => {
-    navigate(`/edit-property/${propertyId}`);
+    navigate(`/addproperty/${propertyId}`);
   };
 
   const handleDelete = async (propertyId) => {
     if (!window.confirm('هل أنت متأكد من رغبتك في حذف هذا العقار؟')) return;
     try {
-      await api.delete(`/user/delete-property/${propertyId}`, {
+      await api.delete(`/user/deleteProperty/${propertyId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
-        }
+        },
       });
-      setMyProperties(prev => prev.filter(p => p.id !== propertyId));
+      setMyProperties((prev) => prev.filter((p) => p.id !== propertyId));
       alert('تم حذف العقار بنجاح.');
     } catch (err) {
       console.error(err);
@@ -108,7 +105,7 @@ const MyProperties = () => {
       </Alert>
     );
   }
-  
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible">
       <motion.div variants={itemVariants} className="d-flex justify-content-between align-items-center mb-4">
@@ -157,23 +154,29 @@ const MyProperties = () => {
                   <td>{property.price?.toLocaleString('ar-SY')} ل.س</td>
                   <td>{new Date(property.created_at).toLocaleDateString('ar-SY')}</td>
                   <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2 mb-1 mb-md-0"
-                      onClick={() => handleEdit(property.id)}
-                      title="تعديل"
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => handleDelete(property.id)}
-                      title="حذف"
-                    >
-                      <i className="bi bi-trash3-fill"></i>
-                    </Button>
+                    {property.status === 'pending' ? (
+                      <span className="text-muted">عقار معلق</span>
+                    ) : (
+                      <>
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="me-2 mb-1 mb-md-0"
+                          onClick={() => handleEdit(property.id)}
+                          title="تعديل"
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleDelete(property.id)}
+                          title="حذف"
+                        >
+                          <i className="bi bi-trash3-fill"></i>
+                        </Button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -52,3 +52,11 @@
   .property-listings-page .spinner-border {
       color: #d6762e !important;
   }
+  .property-listings-page .card {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    border-radius: 1rem;
+  }
+  
+  .property-listings-page .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }

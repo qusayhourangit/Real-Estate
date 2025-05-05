@@ -25,6 +25,8 @@
 .hero-container {
   justify-content: space-between;
   align-items: flex-end; /* تعديل المحاذاة لتكون أفضل */
+  position: relative;
+  z-index: 1;
 }
 .hero-title > h1 {
   font-weight: 600;
@@ -35,12 +37,17 @@
 .orange-circle {
   height: 4rem;
   width: 4rem;
-  background: var(--hover-color); /* استخدام لون الهوفر للدائرة */
+  background: var(--hover-color);
   border-radius: 999px;
-  position: absolute;
   right: -1rem;
   top: -1rem;
-  z-index: -1;
+  z-index: -3; 
+  position: absolute;
+}
+
+.hero-title {
+  position: relative;
+  z-index: 1;
 }
 .hero-des p {
   color: var(--text-color);
@@ -245,4 +252,23 @@
 /* إعادة تعريف text-primary للتأكد من تطبيق اللون */
 .text-primary{
   color: var(--primary-color) !important ;
+}
+.success-message {
+  position: fixed;
+  top: 10px; /* لتكون فوق الموقع */
+  right: 10px; /* أو left: 10px إذا أردت أن تظهر على اليسار */
+  z-index: 1050; /* لتكون فوق باقي العناصر */
+  background-color: #d4edda; /* اللون الأخضر الفاتح */
+  color: #155724; /* اللون الأخضر للخط */
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.success-message i {
+  margin-right: 8px;
 }

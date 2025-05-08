@@ -39,9 +39,8 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await api.post('/login', credentials); // تأكد أن هذا الـ Endpoint الصحيح
+      const response = await api.post('/login', credentials);
 
-      // تأكد من أن الـ API يرجع token و user ضمن response.data.data
       if (response.data?.data?.token && response.data?.data?.user) {
         const { token, user } = response.data.data;
 
@@ -51,18 +50,35 @@ export const loginUser = createAsyncThunk(
 
         return { token, user };
       } else {
-        // إذا لم تكن البيانات موجودة بالشكل المتوقع
+        const errorMessage =
+          response.data?.message ||
+          response.data?.error ||
+          'فشل تسجيل الدخول: البيانات غير مكتملة من الخادم.';
+      
         console.error("Login API response missing token or user:", response.data);
-        return rejectWithValue('فشل تسجيل الدخول: استجابة غير متوقعة من الخادم.');
+      
+        const translatedMessage = {
+          'The provided credentials are incorrect': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+          'Your account has been banned. Please contact the administrator': 'تم حظر حسابك. يرجى التواصل مع الإدارة.',
+        }[errorMessage] || errorMessage;
+      
+        return rejectWithValue(translatedMessage);
       }
 
     } catch (error) {
       console.error("Login API error:", error.response?.data || error.message);
-      // إرجاع رسالة الخطأ من الـ API إن وجدت، أو رسالة عامة
-      return rejectWithValue(
-        error.response?.data?.message ||
-        'فشل تسجيل الدخول، الرجاء التحقق من البيانات أو المحاولة لاحقًا.'
-      );
+
+      let serverError = 'فشل تسجيل الدخول، الرجاء التحقق من البيانات أو المحاولة لاحقًا.';
+      if (error.response?.data) {
+        if (typeof error.response.data === 'string') {
+          serverError = error.response.data;
+        } else if (error.response.data.message) {
+          serverError = error.response.data.message;
+        } else if (error.response.data.error) {
+          serverError = error.response.data.error;
+        }
+      }
+      return rejectWithValue(serverError);
     }
   }
 );

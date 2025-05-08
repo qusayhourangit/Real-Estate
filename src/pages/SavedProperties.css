@@ -45,3 +45,8 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(227, 142, 73, 0.3);
 }
+.lastsave {
+    position: relative;
+    display: inline-block;
+    right: 39% !important;
+}

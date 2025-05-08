@@ -214,7 +214,7 @@ const SavedProperties = () => {
           <Container className="py-lg-4 position-relative">
              <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay: 0.1}}>
                  <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 className="section-title mb-0">
+                    <h2 className=" lastsave section-title mb-0">
                         <i className="bi bi-bookmark-star-fill text-primary me-2"></i> محفوظاتك الأخيرة
                     </h2>
                     <Link to="/dashboard/saved" className="btn btn-outline-primary btn-sm" style={{color: '#d6762e', borderColor: '#d6762e'}}>

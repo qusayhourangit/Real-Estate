@@ -7,6 +7,7 @@ import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/authSlice'; // استيراد أكشن loginUser من السلايس
+import { motion, AnimatePresence } from 'framer-motion';
 
 const loginSchema = z.object({
   email: z.string()
@@ -64,7 +65,7 @@ export default function Login() {
           setServerSuccess('تم تسجيل الدخول بنجاح');
           navigate('/'); // التوجيه إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
         } else {
-          setServerError(result.error.message || 'فشل تسجيل الدخول');
+          setServerError(result.payload || 'فشل تسجيل الدخول');
         }
       })
       .catch((err) => {
@@ -81,17 +82,60 @@ export default function Login() {
           </h4>
         </Card.Header>
         <Card.Body className="p-4">
-          {serverError && (
-            <Alert variant="danger" className="text-center" dismissible onClose={() => setServerError('')}>
-              {serverError}
-            </Alert>
-          )}
+          <AnimatePresence>
+            {serverError && (
+              <motion.div
+                key="error-alert"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="d-flex justify-content-center mt-3"
+              >
+                <div style={{ maxWidth: '400px', width: '100%' }}>
+                  <Alert
+                    variant="danger"
+                    className="shadow-sm border border-danger-subtle fw-semibold px-3"
+                    style={{ direction: 'rtl' }}
+                  >
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex align-items-center">
+                        <i className="bi bi-exclamation-triangle-fill ms-2"></i>
+                        <span>{serverError}</span> {/* ✅ استخدم الرسالة الفعلية */}
+                      </div>
+                    </div>
+                  </Alert>  </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
+          <AnimatePresence>
           {serverSuccess && (
-            <Alert variant="success" className="text-center">
-              {serverSuccess}
-            </Alert>
-          )}
+  <motion.div
+    key="success-alert"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+    className="d-flex justify-content-center mt-3"
+  >
+    <div style={{ maxWidth: '400px', width: '100%' }}>
+      <Alert
+        variant="success"
+        dismissible
+        onClose={() => setServerSuccess('')}
+        className="shadow-sm border border-success-subtle text-end fw-semibold"
+        style={{ direction: 'rtl' }}
+      >
+        <div className="d-flex align-items-center">
+          <i className="bi bi-check-circle-fill ms-2 text-success fs-5"></i>
+          <span className="flex-grow-1">تم تسجيل الدخول بنجاح ✅</span>
+        </div>
+      </Alert>
+    </div>
+  </motion.div>
+)}
+          </AnimatePresence>
 
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3" controlId="email">
@@ -138,7 +182,7 @@ export default function Login() {
                   </>
                 ) : (
                   <>
-                    <i className="bi bi-box-arrow-in-right me-2"></i> تسجيل الدخول
+                    <i className="bi bi-box-arrow-in-right me-4"></i> تسجيل الدخول
                   </>
                 )}
               </Button>

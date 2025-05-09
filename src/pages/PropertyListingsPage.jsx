@@ -74,7 +74,7 @@ const PropertyListingsPage = () => {
         currentPage++;
         lastPage = responseData?.last_page || 1;
       } while (currentPage <= lastPage);
-  
+  console.log("PropertyListingsPage - All properties fetched from API:", JSON.stringify(allProperties, null, 2));
       setAllFetchedProperties(allProperties);
     } catch (err) {
       setError(err.message || 'حدث خطأ أثناء تحميل العقارات');

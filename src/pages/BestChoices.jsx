@@ -84,6 +84,7 @@ const BestChoices = () => {
         currentPage++;
         lastPage = responseData?.last_page || 1;
       } while (currentPage <= lastPage);
+      console.log("BestChoices - All properties fetched from API:", JSON.stringify(allProperties, null, 2));
       setProperties(allProperties);
     } catch (err) {
       console.error('Failed to fetch properties:', err);
@@ -205,20 +206,33 @@ const BestChoices = () => {
                     onClick={() => handlePropertyClick(property.id)}
                   >
                     <div className="position-relative">
-                      <Card.Img
-                        variant="top" // Bootstrap class
-                        className="card-img-top" // Explicit class for CSS targeting
-                        src={
-                          property.images?.[0]?.image
-                            ? `${api.defaults.baseURL}/storage/${property.images[0].image}`
-                            : 'https://via.placeholder.com/300x200?text=No+Image'
-                        }
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = 'https://via.placeholder.com/300x200?text=Error';
-                        }}
-                        alt={property.title || 'صورة عقار'}
-                      />
+         <Card.Img variant="top"
+    src={
+        // 1. تحقق أن property.images موجود وهو مصفوفة وغير فارغ.
+        // 2. تحقق أن العنصر الأول property.images[0] موجود.
+        // 3. تحقق أن property.images[0] لديه خاصية 'filename' (التي تحمل الرابط الكامل).
+        // 4. تحقق أن قيمة 'filename' هي سلسلة نصية (رابط URL صالح).
+        (
+            property.images &&
+            Array.isArray(property.images) &&
+            property.images.length > 0 &&
+            property.images[0] && // تأكد أن الكائن الأول موجود
+            typeof property.images[0].filename === 'string' && // تأكد أن filename هو سلسلة نصية
+            (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://')) // تأكد أنه رابط
+        )
+        ? property.images[0].filename // <--- استخدم الرابط الكامل مباشرة من 'filename'
+        : 'https://via.placeholder.com/400x250?text=NoSavedImg' // صورة افتراضية مميزة للمحفوظات
+    }
+    alt={property.title || 'صورة عقار'}
+    className="property-image" // تأكد أن لديك CSS لهذه الكلاسات
+    loading="lazy"
+    onError={(e) => {
+        console.error(`SavedProperties: Error loading image for property ID ${propertyId}. Attempted src: ${e.target.src}`, e);
+        e.target.onerror = null;
+        e.target.src = 'https://via.placeholder.com/400x250?text=SavedImgError'; // صورة خطأ مميزة
+    }}
+    style={{ height: '200px', objectFit: 'cover' }} // أسلوب بسيط لضمان حجم الصورة (اختياري)
+/>
                       <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
                         {property.purpose && (
                           <Badge bg={getDealTypeColor(property.purpose)} className="rounded-pill px-2 py-1 text-white">

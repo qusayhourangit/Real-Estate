@@ -81,6 +81,7 @@ const SavedProperties = () => {
       let idsToSet = new Set();
       if (response.data && response.data.data && Array.isArray(response.data.data.properties)) {
           dataToSet = response.data.data.properties;
+              console.log("SavedProperties - Data for saved properties (dataToSet):", JSON.stringify(dataToSet, null, 2)); // <--- اطبع هنا
           idsToSet = new Set(dataToSet.map(savedItem => savedItem.property?.id).filter(id => id != null));
           console.log("SavedProperties (Home): Extracted saved IDs:", idsToSet);
       } else {
@@ -263,17 +264,18 @@ const SavedProperties = () => {
                           <motion.div variants={savedItemVariants} className="h-100 w-100 ">
                             <Card className="property-card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column" onClick={() => handlePropertyClick(propertyId)} style={{ cursor: 'pointer' }} whileHover={{ y: -5 }}>
                                 <div className="property-image-wrapper position-relative">
-                                    <Card.Img variant="top"
-                                        src={
-                                            property.images && property.images.length > 0 && property.images[0]?.image
-                                            ? `${api.defaults.baseURL}/storage/${property.images[0].image}`
-                                            : property.main_image
-                                            ? `${api.defaults.baseURL}/storage/${property.main_image}`
-                                            : property.image
-                                            ? `${api.defaults.baseURL}/storage/${property.image}`
-                                            : 'https://via.placeholder.com/400x250?text=No+Image'
-                                        }
-                                        alt={property.title || 'صورة عقار'} className="property-image" loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/400x250?text=No+Image'; }}/>
+                    <Card.Img variant="top"
+    src={
+        property.images && property.images.length > 0 && property.images[0]?.image
+        ? `${api.defaults.baseURL}/storage/${property.images[0].image}`
+        : property.main_image
+        ? `${api.defaults.baseURL}/storage/${property.main_image}`
+        : property.image
+        ? `${api.defaults.baseURL}/storage/${property.image}`
+        : 'https://via.placeholder.com/400x250?text=No+Image'
+    }
+    // ...
+/>
                                     <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
                                         {property.purpose && (<Badge pill bg={getDealTypeColor(property.purpose)} className="px-2 small fw-semibold">{getTypeArabic(property.purpose)}</Badge>)}
                                         {property.type && (<Badge pill bg={getPropertyTypeColor(property.type)} className="px-2 small fw-semibold">{getCategoryArabic(property.type)}</Badge>)}

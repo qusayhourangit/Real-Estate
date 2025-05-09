@@ -38,9 +38,17 @@ const PropertyCard = ({ property, isSaved, onToggleFavorite, isSaving }) => {
   }
 
   // Image URL logic
-  const imageUrl = (property.images && property.images.length > 0 && property.images[0]?.image)
-    ? `${api.defaults.baseURL}/storage/${property.images[0].image}` // Correct URL construction
-    : 'https://via.placeholder.com/400x250/cccccc/969696?text=No+Image'; // Placeholder
+    const imageUrl = (
+      property.images &&
+      Array.isArray(property.images) &&
+      property.images.length > 0 &&
+      property.images[0] &&
+      typeof property.images[0].filename === 'string' &&
+      (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://'))
+  )
+  ? property.images[0].filename // استخدم الرابط الكامل مباشرة
+  : 'https://via.placeholder.com/300x200?text=NoPropImage'; // صورة افتراضية
+
 
   // Handler for clicking the entire card
   const handleCardClick = () => {
@@ -71,16 +79,15 @@ const PropertyCard = ({ property, isSaved, onToggleFavorite, isSaving }) => {
       style={{ cursor: 'pointer' }} // Make it clear the card is clickable
     >
       <div className="position-relative">
-        <Card.Img
-          variant="top"
-          className="card-img-top" // Ensure consistent styling
-          src={imageUrl}
-          alt={property.title || 'صورة عقار'}
+         <Card.Img 
+          variant="top" 
+          src={imageUrl} // <--- استخدام imageUrl المعدلة
+          alt={property.title || "صورة عقار"}
+          style={{ height: '200px', objectFit: 'cover' }}
           onError={(e) => {
-            e.target.onerror = null; // Prevent potential infinite loops on error
-            e.target.src = 'https://via.placeholder.com/400x250/cccccc/969696?text=Image+Error';
+            e.target.onerror = null;
+            e.target.src = 'https://via.placeholder.com/300x200?text=ImgError';
           }}
-          style={{ height: '200px', objectFit: 'cover' }} // Consistent image height and fit
         />
 
         {/* Property Tags (Positioned Top-Right) */}

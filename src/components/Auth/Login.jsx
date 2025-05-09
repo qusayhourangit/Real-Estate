@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Card, Form, Button, Alert , InputGroup } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/authSlice'; // استيراد أكشن loginUser من السلايس
@@ -26,6 +26,30 @@ const customStyles = `
   .card { direction: rtl; }
   .form-control, .form-select { text-align: right; }
   .form-label i { margin-left: 8px; }
+  .password-input-group .input-group-text {
+    cursor: pointer;
+    background-color: transparent; /* أو أي لون خلفية تفضله */
+    border-right: 0; /* لإزالة الحد المزدوج إذا كان الحقل dir="rtl" */
+    border-left: 1px solid #ced4da; /* إضافة حد أيسر ليتناسب مع التصميم */
+  }
+    .password-input-group:hover .input-group-text {
+    background-color:#e38e49;
+    color:white;
+    }
+
+  .password-input-group .form-control {
+    border-left: 0; /* لإزالة الحد المزدوج */
+    border-right: 1px solid #ced4da;
+  }
+  /* تعديل بسيط لـ RTL إذا كان dir="rtl" على الـ Form.Control */
+  .password-input-group .form-control[dir="rtl"] {
+    border-right: 0;
+    border-left: 1px solid #ced4da;
+  }
+  .password-input-group .form-control[dir="rtl"] + .input-group-text {
+    border-left: 0;
+    border-right: 1px solid #ced4da; 
+  }
 `;
 
 export default function Login() {
@@ -34,6 +58,7 @@ export default function Login() {
   const { error, loading, success } = useSelector((state) => state.auth); // قراءة حالة المصادقة من Redux
   const [serverError, setServerError] = useState('');
   const [serverSuccess, setServerSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -72,7 +97,9 @@ export default function Login() {
         setServerError(err.message || 'حدث خطأ غير متوقع');
       });
   };
-
+    const togglePasswordVisibility = () => {
+    setShowPassword(prevShowPassword => !prevShowPassword);
+  };
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <Card className="w-100 shadow-lg" style={{ maxWidth: '500px' }}>
@@ -157,13 +184,18 @@ export default function Login() {
               <Form.Label className="d-flex align-items-center">
                 <i className="bi bi-lock"></i> كلمة المرور
               </Form.Label>
-              <Form.Control
-                type="password"
-                {...register('password')}
-                isInvalid={!!errors.password}
-                dir="rtl"
-              />
-              <Form.Control.Feedback type="invalid">
+              <InputGroup className="password-input-group"> {/* <--- استخدام InputGroup */}
+                <Form.Control
+                  type={showPassword ? 'text' : 'password'} // <--- تغيير النوع ديناميكيًا
+                  {...register('password')}
+                  isInvalid={!!errors.password}
+                  dir="rtl" // مهم لتوجيه النص داخل الحقل
+                />
+                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }}>
+                  <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i> {/* <--- أيقونة العين */}
+                </InputGroup.Text>
+              </InputGroup>
+              <Form.Control.Feedback type="invalid" className={errors.password ? 'd-block' : ''}> {/* d-block لإظهارها دائمًا إذا كان هناك خطأ */}
                 {errors.password?.message}
               </Form.Control.Feedback>
             </Form.Group>

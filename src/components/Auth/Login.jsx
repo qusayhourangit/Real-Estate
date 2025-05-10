@@ -32,7 +32,7 @@ const customStyles = `
     border-right: 0; /* لإزالة الحد المزدوج إذا كان الحقل dir="rtl" */
     border-left: 1px solid #ced4da; /* إضافة حد أيسر ليتناسب مع التصميم */
   }
-    .password-input-group:hover .input-group-text {
+    .input-group-text:hover {
     background-color:#e38e49;
     color:white;
     }
@@ -83,12 +83,11 @@ export default function Login() {
     setServerError('');
     setServerSuccess('');
 
-    // استخدام loginUser من السلايس
     dispatch(loginUser(formData))
       .then((result) => {
         if (result.meta.requestStatus === 'fulfilled') {
           setServerSuccess('تم تسجيل الدخول بنجاح');
-          navigate('/'); // التوجيه إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
+          navigate('/'); 
         } else {
           setServerError(result.payload || 'فشل تسجيل الدخول');
         }
@@ -128,7 +127,7 @@ export default function Login() {
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center">
                         <i className="bi bi-exclamation-triangle-fill ms-2"></i>
-                        <span>{serverError}</span> {/* ✅ استخدم الرسالة الفعلية */}
+                        <span>{serverError}</span> 
                       </div>
                     </div>
                   </Alert>  </div>

@@ -151,7 +151,7 @@ const SavedProperties = () => {
   // --------------------------------------------------
 
   // --- النقر على الكارد ---
-  const handlePropertyClick = (propertyId) => { navigate(`/property/${propertyId}`); };
+  const handlePropertyClick = (propertyId) => { navigate(`/properties/${propertyId}`); };
   // ----------------------
 
   // --- 1. العرض للمستخدم غير المسجل (يعتمد على isAuthenticated من Redux) ---
@@ -264,18 +264,33 @@ const SavedProperties = () => {
                           <motion.div variants={savedItemVariants} className="h-100 w-100 ">
                             <Card className="property-card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column" onClick={() => handlePropertyClick(propertyId)} style={{ cursor: 'pointer' }} whileHover={{ y: -5 }}>
                                 <div className="property-image-wrapper position-relative">
-                    <Card.Img variant="top"
-    src={
-        property.images && property.images.length > 0 && property.images[0]?.image
-        ? `${api.defaults.baseURL}/storage/${property.images[0].image}`
-        : property.main_image
-        ? `${api.defaults.baseURL}/storage/${property.main_image}`
-        : property.image
-        ? `${api.defaults.baseURL}/storage/${property.image}`
-        : 'https://via.placeholder.com/400x250?text=No+Image'
-    }
-    // ...
-/>
+                   <Card.Img variant="top"
+                                                                       src={
+                                                                           // 1. تحقق أن property.images موجود وهو مصفوفة وغير فارغ.
+                                                                           // 2. تحقق أن العنصر الأول property.images[0] موجود.
+                                                                           // 3. تحقق أن property.images[0] لديه خاصية 'filename' (التي تحمل الرابط الكامل).
+                                                                           // 4. تحقق أن قيمة 'filename' هي سلسلة نصية (رابط URL صالح).
+                                                                           (
+                                                                               property.images &&
+                                                                               Array.isArray(property.images) &&
+                                                                               property.images.length > 0 &&
+                                                                               property.images[0] && // تأكد أن الكائن الأول موجود
+                                                                               typeof property.images[0].filename === 'string' && // تأكد أن filename هو سلسلة نصية
+                                                                               (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://')) // تأكد أنه رابط
+                                                                           )
+                                                                               ? property.images[0].filename // <--- استخدم الرابط الكامل مباشرة من 'filename'
+                                                                               : 'https://via.placeholder.com/400x250?text=NoSavedItemImg' // صورة افتراضية مميزة (غيرت النص قليلاً)
+                                                                       }
+                                                                       alt={property.title || 'صورة عقار'}
+                                                                       className="property-image" // تأكد أن لديك CSS لهذه الكلاسات
+                                                                       loading="lazy"
+                                                                       onError={(e) => {
+                                                                           console.error(`SavedPropertiesPage: Error loading image for property ID ${propertyIdForActions}. Attempted src: ${e.target.src}`, e);
+                                                                           e.target.onerror = null;
+                                                                           e.target.src = 'https://via.placeholder.com/400x250?text=SavedItemImgError'; // صورة خطأ مميزة
+                                                                       }}
+                                                                       style={{ height: '200px', objectFit: 'cover' }} // أسلوب بسيط لضمان حجم الصورة (اختياري)
+                                                                   />
                                     <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
                                         {property.purpose && (<Badge pill bg={getDealTypeColor(property.purpose)} className="px-2 small fw-semibold">{getTypeArabic(property.purpose)}</Badge>)}
                                         {property.type && (<Badge pill bg={getPropertyTypeColor(property.type)} className="px-2 small fw-semibold">{getCategoryArabic(property.type)}</Badge>)}

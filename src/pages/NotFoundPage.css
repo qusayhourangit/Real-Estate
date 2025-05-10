@@ -1,0 +1,104 @@
+/* NotFoundPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap'); /* خط عربي جميل */
+
+.not-found-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh; /* يأخذ معظم ارتفاع الشاشة */
+  text-align: center;
+  font-family: 'Cairo', sans-serif; /* استخدام الخط العربي */
+  background-color: #f8f9fa; /* لون خلفية فاتح */
+  color: #333;
+  padding: 20px;
+  direction: rtl; /* لدعم اللغة العربية بشكل صحيح */
+}
+
+.not-found-content {
+  max-width: 600px;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.not-found-title {
+  font-size: 6rem; /* حجم كبير للرقم 404 */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #dc3545; /* لون أحمر مميز للخطأ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-title span {
+  display: inline-block;
+}
+
+.not-found-zero-icon {
+  font-size: 4.5rem; /* حجم الأيقونة ليتناسب */
+  margin: 0 0.2em;
+  color: #ffc107; /* لون أصفر للأيقونة */
+  animation: float 3s ease-in-out infinite; /* حركة بسيطة */
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.not-found-subtitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 1rem;
+}
+
+.not-found-message {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.not-found-link {
+  display: inline-block;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #007bff; /* لون أزرق أساسي */
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.not-found-link:hover {
+  background-color: #0056b3; /* لون أزرق أغمق عند المرور */
+  transform: translateY(-2px); /* تأثير رفع بسيط */
+}
+
+/* تصميم متجاوب للهواتف */
+@media (max-width: 768px) {
+  .not-found-title {
+    font-size: 4rem;
+  }
+  .not-found-zero-icon {
+    font-size: 3rem;
+  }
+  .not-found-subtitle {
+    font-size: 1.5rem;
+  }
+  .not-found-message {
+    font-size: 1rem;
+  }
+  .not-found-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}

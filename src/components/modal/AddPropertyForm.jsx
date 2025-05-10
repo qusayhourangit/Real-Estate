@@ -84,11 +84,18 @@ export default function PropertyForm({ onSubmissionSuccess }) {
 const uploadImageToCloudinary = async (file) => {
   const cloudName = 'dyrxrlb8f';
   const uploadPreset = 'real_estate_preset';
-
+  const MAX_IMAGE_SIZE_MB = 10; // الحد الأقصى لحجم الصورة بالميغابايت
+  const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024; // تحويل الميغابايت إلى بايت
   if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
     // يمكنك طباعة نوع الملف للمساعدة في التشخيص
     console.error(`Unsupported file type: ${file.name} (type: ${file.type})`);
     throw new Error("الصور المرفوعة غير مدعومة، يجب أن تكون من النوع JPEG أو PNG أو JPG.");
+  }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    console.error(`File too large: ${file.name} (size: ${file.size} bytes, max: ${MAX_IMAGE_SIZE_BYTES} bytes)`);
+    // يمكنك عرض حجم الملف الحالي للمستخدم لمساعدته
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2); // حجم الملف الحالي بالميغا
+    throw new Error(`حجم الصورة كبير جداً (${fileSizeMB} ميغابايت). يجب ألا يتجاوز حجم الصورة ${MAX_IMAGE_SIZE_MB} ميغابايت.`);
   }
 
   const imageFormData = new FormData(); // <--- من الأفضل استخدام اسم متغير مختلف هنا لتجنب الالتباس مع formData الخارجية
@@ -103,10 +110,7 @@ const uploadImageToCloudinary = async (file) => {
         headers: {
           'Content-Type': 'multipart/form-data', // axios قد يضبط هذا تلقائيًا لـ FormData، لكن لا ضرر من تحديده
         }
-        // يمكنك إضافة onUploadProgress هنا إذا أردت تتبع تقدم الرفع
-        // onUploadProgress: progressEvent => {
-        //   console.log('Upload Progress: ' + Math.round((progressEvent.loaded / progressEvent.total) * 100) + '%');
-        // }
+        
       }
     );
 
@@ -372,7 +376,7 @@ for (let pair of formData.entries()) {
         response = await api.post('/user/storeProperty', formData, { headers });
         console.log('Add Response:', response.data);
         setFormSuccess("✅ تم إضافة العقار بنجاح، بانتظار المراجعة من قبل المسؤولين.");
-        setTimeout(() => navigate('/', { replace: true }), 1500); // Navigate back to dashboard
+        setTimeout(() => navigate('/', { replace: true }), 2500); // Navigate back to dashboard
         // Reset form completely after successful add
         reset({ title: '', description: '', type: 'house', purpose: 'sale', price: '', area: '', phone: '', address: '' });
         setFiles([]); setPosition([33.5138, 36.2765]); setSearchQuery('');
@@ -421,7 +425,7 @@ for (let pair of formData.entries()) {
         <AnimatePresence>
           {formError && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-              <Alert variant="danger" onClose={() => setFormError(null)} dismissible className="d-flex align-items-center mb-3">
+              <Alert variant="danger" className="d-flex align-items-center mb-3">
                 <i className="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
                 <div style={{ whiteSpace: 'pre-wrap' }}>{formError}</div>
               </Alert>
@@ -546,7 +550,9 @@ for (let pair of formData.entries()) {
             </AnimatePresence>
 
             <div className="form-group">
-              <label htmlFor="images"><i className="bi bi-images"></i> {isEditMode ? 'إضافة صور جديدة (اختياري)' : 'صور العقار'} (4 كحد أقصى)</label>
+              <label htmlFor="images"><i className="bi bi-images"></i> {isEditMode ? 'إضافة صور جديدة (اختياري)' : 'صور العقار'} 
+              (4 كحد أقصى)
+              <h6>*ملاحظة : الحد الأقصى لحجم الصورة هو 10MB</h6></label>
               <div className="file-upload">
                 <label htmlFor="images" className={`btn btn-outline border ${isSubmitting ? 'disabled' : ''}`}>
                   <i className="bi bi-upload"></i> اختر الصور

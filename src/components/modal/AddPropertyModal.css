@@ -21,7 +21,10 @@
   margin-bottom: 25px;
   color: var(--primary-color);
 }
-
+.form-group label h6{
+  color: #666;
+  font-size: 13px;
+}
 .form-header h2 {
   font-weight: 700;
   font-size: 2rem !important;

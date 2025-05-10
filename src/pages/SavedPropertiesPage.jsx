@@ -116,7 +116,7 @@ const SavedPropertiesPage = () => {
     };
 
     // الانتقال لصفحة تفاصيل العقار
-    const handlePropertyClick = (propertyId) => { navigate(`/property/${propertyId}`); };
+    const handlePropertyClick = (propertyId) => { navigate(`/properties/${propertyId}`); };
 
     // --- عرض حالة عدم تسجيل الدخول ---
     if (!isAuthenticated) {

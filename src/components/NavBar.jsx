@@ -57,7 +57,7 @@ function NavBar() {
           <NavLink to="/aboutus" className="nav-link nav-link-item">من نحن</NavLink>
           <NavLink to="/contactus" className="nav-link nav-link-item">التواصل معنا</NavLink>
           <NavLink to="/properties" className="nav-link nav-link-item">البحث عن عقار</NavLink>
-          <NavLink to="/" className="nav-link nav-link-item" end>الرئيسيةm</NavLink>
+          <NavLink to="/" className="nav-link nav-link-item" end>الرئيسية</NavLink>
         </div>
 
         {/* الجزء الأيسر: أزرار المستخدم */}

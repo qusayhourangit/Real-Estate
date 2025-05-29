@@ -153,8 +153,16 @@ const ManageUsers = () => {
               {users.map((user) => (
                 <motion.tr key={user.id} variants={listItemVariants}>
                   <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
+<td>
+  {user.name}{' '}
+  {user.is_verified_agent === 1 && (
+    <i
+      className="bi bi-patch-check-fill text-primary"
+      title="وكيل موثق"
+      style={{ fontSize: '1rem', marginLeft: '5px' }}
+    ></i>
+  )}
+</td>                  <td>{user.email}</td>
                   <td>
                     <Badge bg={user.role === 'admin' ? 'primary' : 'secondary'}>
                       {user.role === 'admin' ? 'أدمن' : 'مستخدم'}

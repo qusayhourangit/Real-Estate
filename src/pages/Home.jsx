@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate , useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Home.css'; // تأكد من استيراد ملف CSS
 import CountUp from 'react-countup';
@@ -8,6 +8,7 @@ import SavedProperties from './SavedProperties';
 import FeaturesSection from './FeaturesSection';
 import Footer from './Footer';
 import Testimonials from './Testimonials';
+import PricingSectionHome from './PricingSectionHome'; 
 import { motion } from 'framer-motion';
 
 // --- Variants (لأنيميشن الدخول - تبقى كما هي) ---
@@ -28,10 +29,10 @@ const Home = () => {
   useEffect(() => {
     if (location.state?.successMessage) {
       setSuccessMessage(location.state.successMessage);
-  
+
       // تنظيف الرسالة بعد عرضها
       window.history.replaceState({}, document.title);
-      
+
       const timer = setTimeout(() => setSuccessMessage(null), 8000);
       return () => clearTimeout(timer);
     }
@@ -49,11 +50,11 @@ const Home = () => {
 
   return (
     <>
-     {successMessage && (
-  <div className="success-message">
-    {successMessage}
-  </div>
-)}
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
       <motion.section
         className="hero-wrapper container-fluid container"
         dir="rtl"
@@ -165,6 +166,7 @@ const Home = () => {
 
       {/* باقي مكونات الصفحة */}
       <BestChoices />
+      <PricingSectionHome /> 
       <Testimonials />
       <SavedProperties />
       <FeaturesSection />

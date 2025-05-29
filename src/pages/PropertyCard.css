@@ -1,110 +1,193 @@
 /* PropertyCard.css */
 
-/* حاوية الصورة */
+.property-card {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 6px !important;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
 .property-card-image-container {
-    position: relative;
-  }
-  
-  /* صورة العقار */
-  .property-card-image {
-    height: 200px;
-    object-fit: cover;
-    width: 100%;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .property-card:hover .property-card-image {
-    transform: scale(1.05);
-  }
-  
-  /* زر المفضلة */
-  .favorite-btn-card {
-    position: absolute !important;
-    top: 10px;
-    right: 10px;
-    border-radius: 50% !important;
-    width: 34px !important;
-    height: 34px !important;
-    padding: 0 !important;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem !important;
-    z-index: 3;
-    border: none !important;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .favorite-btn-card.btn-light {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-  }
-  
-  .favorite-btn-card svg {
-    color: #dc3545;
-  }
-  
-  .favorite-btn-card.btn-light:hover {
-    background-color: rgba(255, 255, 255, 1) !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-  
-  .favorite-btn-card.btn-danger {
-    background-color: rgba(220, 53, 69, 0.85) !important;
-    color: white !important;
-  }
-  
-  .favorite-btn-card.btn-danger svg {
-    color: white !important;
-  }
-  
-  .favorite-btn-card.btn-danger:hover {
-    background-color: rgba(220, 53, 69, 1) !important;
-  }
-  
-  .favorite-btn-card:hover {
-    transform: scale(1.1);
-  }
-  
-  /* عنوان العقار */
-  .property-card-title a.stretched-link {
-    color: var(--text-dark, #2c3e50);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: color 0.2s ease;
-  }
-  
-  .property-card-title a.stretched-link:hover {
-    color: var(--main-color, #e38e49);
-    text-decoration: none;
-  }
-  
-  .property-card-title {
-    position: relative;
-  }
-  
-  /* بادج نوع الصفقة */
-  .property-purpose-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 2;
+  position: relative;
+}
+
+.property-card-image {
+  height: 190px;
+  object-fit: cover;
+  width: 100%;
+  background-color: #f5f5f5;
+  display: block;
+  border-top-left-radius: calc(6px - 1px); /* -1px to account for card border if any */
+  border-top-right-radius: calc(6px - 1px);
+}
+
+.property-card .card-body {
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.property-card-title-custom {
+  font-size: 1rem; 
+  font-weight: 600;
+  color: #333333;
+  line-height: 1.35;
+  /* mb-2 is on the element from JSX */
+}
+.title-when-no-agent-badge {
+    margin-top: 0.1rem; /* Adjust this value to control space when agent badge is NOT present */
+}
+
+.property-card-address {
+  font-size: 0.8rem; 
+  color: #6c757d;
+}
+.property-card-address i.bi-geo-alt-fill {
+  color: #e38e49;
+  font-size: 0.9em;
+}
+
+.property-price-style {
+  font-size: 1.1rem !important; 
+  color: #d6762e !important;
+  font-weight: 700;
+  /* mb-2 from JSX */
+}
+.rent-period {
     font-size: 0.75rem;
-    padding: 0.3em 0.6em;
-  }
+    font-weight: 500;
+}
+
+.property-details-footer {
+  font-size: 0.75rem;
+  color: #555;
+}
+.property-details-footer i {
+  color: #d6762e !important; /* Ensure icon color */
+  margin-right: 0.25rem; 
+  font-size: 0.9rem;
+}
+
+/* --- ١. إطار البطاقة المميزة --- */
+.property-card.truly-featured-property-card {
+  border: 3px solid #FFC107 !important; /* Gold/Yellow, !important to ensure override */
+}
+
+/* --- ٢. شارة "عقار مميز" العلوية (الوسم البرتقالي) --- */
+.property-featured-tag {
+  position: absolute;
+  top: 0px;
+  left: 0px; /* For LTR. In RTL, it will be on the right due to parent dir="rtl" */
+  background-color: #e38e49; /* Orange color from user's image for this tag */
+  padding: 4px 8px; /* Slightly more padding */
+  border-bottom-right-radius: 6px; /* Rounded corner for tag effect */
+  z-index: 4; /* !!! أعلى من الصورة ولكن قد يكون تحت زر القلب !!! */
+  line-height: 1;
+}
+
+.property-featured-tag i.bi-check-lg {
+  color: white;
+  font-size: 0.9rem; 
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+/* --- ٣. شارة "وكيل معتمد" (داخل Card.Body، التصميم الذهبي المطلوب) --- */
+.agent-badge-wrapper {
+  /* text-end class from Bootstrap handles alignment */
+  /* mb-2 from JSX handles bottom margin */
+}
+
+.verified-agent-info-badge {
+  font-size: 0.75rem;  /* حجم الخط، يمكنك تعديله */
+  padding: 0.4em 0.8em; /* الحشوة الداخلية للشارة */
   
-  /* أيقونة العنوان */
-  .property-card-address i {
-    color: var(--main-color, #e38e49);
-  }
+  background-color: #FFC107 !important; /* لون الخلفية الذهبي/الأصفر (لون Bootstrap warning) */
+  /* يمكنك تجربة ألوان ذهبية أخرى مثل:
+     #DAA520 (GoldenRod)
+     #FDB813 (Amber/Gold جميل)
+     #EAAA00 (أغمق قليلاً)
+  */
+  color: #212529 !important; /* لون النص داكن (لون Bootstrap dark) لتباين جيد */
+  /* يمكنك استخدام #000000 للأسود الصريح أو #4A3B00 لبني داكن */
+    margin-right: 100px;
+
+  border-radius: 0.25rem; /* زوايا دائرية قياسية للـ badge، تطابق الصورة تقريباً */
+  /* إذا أردت زوايا أكثر استدارة قليلاً: border-radius: 6px; */
+
+  border: 1px solid #E7A400; /* إطار بلون ذهبي أغمق قليلاً لإعطاء عمق (اختياري) */
+  /* أو لإزالة الإطار: border: none; */
+  /* أو إطار بنفس لون الخلفية: border: 1px solid #FFC107; */
   
-  /* تفاصيل سريعة */
-  .property-quick-stats i {
-    font-size: 1.1rem;
-  }
-  
-  .property-quick-stats p {
-    margin-top: 2px;
-  }
-  
+  display: inline-flex; /* لمحاذاة الأيقونة والنص بشكل جيد */
+  align-items: center;
+  font-weight: 600;    /* خط أعرض قليلاً */
+  text-shadow: none;     /* إزالة أي ظلال نص افتراضية قد تأتي من Badge */
+  /* mb-2 موجودة في JSX، إذا أردت التحكم بالهامش السفلي من هنا، أزلها من JSX */
+}
+
+
+.verified-agent-info-badge i.bi-patch-check-fill {
+  font-size: 1em; 
+  margin-right: 0.4em; /* الأيقونة قبل النص (في LTR) */
+}
+.verified-agent-info-badge span {
+    line-height: 1;
+}
+
+/* --- Tags (للبيع، سكني) --- */
+.property-tags .badge { /* زيادة خصوصية المحدد */
+  font-size: 0.65rem !important; /* استخدام !important بحذر */
+  padding: 0.3em 0.55em !important;
+  font-weight: 500 !important;
+  line-height: 1.1; /* تحسين محاذاة النص داخل البادج الصغير */
+}
+/* يمكنك تسمية كلاسات مخصصة للـ badges إذا أردت تحكم كامل بالألوان من CSS */
+.property-purpose-badge-custom {}
+.property-type-badge-custom {}
+
+
+/* --- زر المفضلة --- */
+.fav-button-card { /* استخدام الكلاس المحدد في JSX */
+  position: absolute !important;
+  top: 8px !important; 
+  left: 8px !important; /* لليسار في LTR، سيكون لليمين في RTL */
+  border-radius: 50% !important;
+  width: 32px !important; 
+  height: 32px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem !important;
+  z-index: 5 !important; /* !!! أعلى من وسم التمييز البرتقالي !!! */
+  border: none !important;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(2px);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fav-button-card:hover {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  transform: scale(1.1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.fav-button-card .spinner-border {
+    width: 0.9rem; 
+    height: 0.9rem;
+    border-width: .15em;
+    color: #d6762e !important; 
+}
+/* لون أيقونات react-icons للمفضلة يتم التحكم به عبر text-danger/text-secondary في JSX */

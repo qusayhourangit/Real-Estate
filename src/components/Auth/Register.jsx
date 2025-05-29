@@ -6,89 +6,82 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../../API/api';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { useDispatch } from 'react-redux'; // <-- 1. استيراد useDispatch
-import { loginUser } from '../../redux/authSlice'; // <-- 2. استيراد loginUser
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../redux/authSlice';
 
+// 1. تحديث Zod Schema
 const registerSchema = z.object({
   name: z.string()
-    .min(3, 'يجب أن يكون الاسم 3 أحرف على الأقل')
-    .max(50, 'يجب أن لا يتجاوز الاسم 50 حرف'),
+    .min(2, 'يجب أن يكون الاسم حرفين على الأقل')
+    .max(100, 'يجب أن لا يتجاوز الاسم 100 حرف'),
   email: z.string()
     .email('صيغة البريد الإلكتروني غير صحيحة')
-    .min(5, 'يجب أن يكون البريد الإلكتروني 5 أحرف على الأقل')
     .max(100, 'يجب أن لا يتجاوز البريد الإلكتروني 100 حرف'),
   password: z.string()
-    .min(6, 'يجب أن تكون كلمة المرور 6 أحرف على الأقل')
-    .max(50, 'يجب أن لا تتجاوز كلمة المرور 50 حرف')
-    .regex(/[A-Z]/, 'يجب أن تحتوي على حرف كبير واحد على الأقل')
-    .regex(/[a-z]/, 'يجب أن تحتوي على حرف صغير واحد على الأقل')
-    .regex(/[0-9]/, 'يجب أن تحتوي على رقم واحد على الأقل')
-});
-
+    .min(8, 'يجب أن تكون كلمة المرور 8 أحرف على الأقل'),
+  password_confirmation: z.string() //  حقل جديد
+    .min(8, 'يجب أن تكون كلمة مرور التأكيد 8 أحرف على الأقل'), //  يمكنك إضافة قواعد مشابهة لكلمة المرور
+})
+  .refine((data) => data.password === data.password_confirmation, { //  التحقق من تطابق كلمتي المرور
+    message: "كلمة المرور غير متطابقة .",
+    path: ["password_confirmation"], //  عرض الخطأ تحت حقل تأكيد كلمة المرور
+  });
+const translateErrorMessage = (msg) => {
+  switch (msg.toLowerCase()) {
+    case "the email has already been taken.":
+      return "البريد الإلكتروني مسجل مسبقاً.";
+    case "the password confirmation does not match.":
+      return "كلمة المرور غير متطابقة .";
+    case "the email must be a valid email address.":
+      return "صيغة البريد الإلكتروني غير صحيحة.";
+    case "the password must be at least 8 characters.":
+      return "يجب أن تكون كلمة المرور 8 أحرف على الأقل.";
+    case "the name must be at least 2 characters.":
+      return "يجب أن يكون الاسم حرفين على الأقل.";
+    default:
+      return msg;
+  }
+};
 const customStyles = `
-  .btn-primary, .bg-primary {
-    background-color: #e38e49 !important;
-    border-color: #e38e49 !important;
-  }
-  .card-header {
-    background-color: #e38e49 !important;
-  }
-  .alert-primary {
-    background-color: rgba(72, 166, 167, 0.2) !important;
-    border-color: rgba(72, 166, 167, 0.3) !important;
-    color: #e38e49 !important;
-  }
-  .card {
-    direction: rtl;
-  }
-  .form-control, .form-select {
-    text-align: right;
-  }
-  .form-label i {
-    margin-left: 8px;
-  }
-    .password-input-group .input-group-text {
-    cursor: pointer;
-    background-color: transparent;
-    border-right: 0; 
-    border-left: 1px solid #ced4da;
-  }
-  .password-input-group .form-control {
-    border-left: 0;
-    border-right: 1px solid #ced4da;
-  }
-  .password-input-group .form-control[dir="rtl"] {
-    border-right: 0;
-    border-left: 1px solid #ced4da;
-  }
-  .password-input-group .form-control[dir="rtl"] + .input-group-text {
-    border-left: 0;
-    border-right: 1px solid #ced4da; 
-  }
- .password-input-group:hover .input-group-text {
+.btn-primary, .bg-primary { background-color: #e38e49 !important; border-color: #e38e49 !important; }
+ .card-header { background-color: #e38e49 !important; } 
+ .alert-primary { background-color: rgba(72, 166, 167, 0.2) !important; border-color: rgba(72, 166, 167, 0.3) !important; color: #e38e49 !important; } 
+ .card { direction: rtl; } .form-control, 
+ .form-select { text-align: right; } 
+ .form-label i { margin-left: 8px; } 
+ .password-input-group 
+ .input-group-text { cursor: pointer; background-color: transparent; border-right: 0;  border-left: 1px solid #ced4da; } 
+ .password-input-group
+  .form-control { border-left: 0; border-right: 1px solid #ced4da; }
+   .password-input-group 
+   .form-control[dir="rtl"] { border-right: 0; border-left: 1px solid #ced4da; }
+    .password-input-group .form-control[dir="rtl"] + 
+    .input-group-text { border-left: 0; border-right: 1px solid #ced4da;  } 
+   .input-group-text:hover {
     background-color:#e38e49;
     color:white;
-    }
-`;
+    }`;
 
 const Register = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState('');
-   const dispatch = useDispatch(); // <-- 3. تهيئة dispatch
-  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState(''); 
-    const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // حالة جديدة لحقل التأكيد
 
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting: isRegistering }, // غيرت الاسم ليكون أوضح
+    formState: { errors, isSubmitting: isRegistering },
   } = useForm({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
+    defaultValues: { // 3. تحديث القيم الافتراضية
       name: '',
       email: '',
-      password: ''
+      password: '',
+      password_confirmation: '' //  إضافة القيمة الافتراضية
     }
   });
 
@@ -99,56 +92,99 @@ const Register = () => {
     return () => document.head.removeChild(styleElement);
   }, []);
 
-  const onSubmit = async (formData) => {
-    setServerError('');
-    
-     try {
-      // --- خطوة 1: محاولة تسجيل الحساب الجديد ---
-      console.log("Register.jsx: Attempting to register with data:", formData);
-      const registrationResponse = await api.post('/register', formData);
-      console.log("Register.jsx: Registration API response:", registrationResponse.data);
+  // دالة onSubmit تبقى كما هي تقريبًا، لأن formData سيحتوي على password_confirmation
+  
+const onSubmit = async (formData) => {
+  console.log("--- onSubmit triggered in Register.jsx ---");
+  console.log("Form Data to be sent:", formData);
 
-      if (registrationResponse.data && (registrationResponse.data.success || registrationResponse.status === 201 || registrationResponse.status === 200) ) {
-        setRegistrationSuccessMessage('تم إنشاء الحساب بنجاح! جاري تسجيل دخولك...');
-        
-        // --- خطوة 2: محاولة تسجيل الدخول تلقائيًا ---
-        const loginCredentials = {
-          email: formData.email,
-          password: formData.password
-        };
-        console.log("Register.jsx: Attempting auto-login with credentials:", loginCredentials);
+  setServerError('');
+  setRegistrationSuccessMessage('');
 
-        // استخدام loginUser thunk من Redux
-        dispatch(loginUser(loginCredentials))
-          .unwrap() // استخدام unwrap للحصول على النتيجة أو الخطأ مباشرة
-          .then((loginResult) => {
-            // loginResult هنا هو action.payload عند النجاح
-            console.log("Register.jsx: Auto-login successful:", loginResult);
-            // لا حاجة لرسالة نجاح هنا، سيتم التوجيه
-            navigate('/'); // توجيه إلى الصفحة الرئيسية
-          })
-          .catch((loginError) => {
-            // loginError هنا هو action.payload عند الفشل (الذي تم إرجاعه من rejectWithValue)
-            console.error("Register.jsx: Auto-login failed after registration:", loginError);
-            setServerError(`تم التسجيل بنجاح، ولكن فشل تسجيل الدخول التلقائي: ${loginError || 'يرجى تسجيل الدخول يدويًا.'}`);
-            // يمكنك توجيه المستخدم لصفحة تسجيل الدخول مع رسالة
-            setTimeout(() => { // تأخير بسيط لرؤية رسالة التسجيل
-                navigate('/login', { state: { success: 'تم التسجيل بنجاح، يرجى تسجيل الدخول الآن.' } });
-            }, 2000);
-          });
+  try {
+    const response = await api.post('/register', formData);
+    console.log("✅ Register response:", response);
 
-      } else {
-        // إذا لم تكن استجابة التسجيل ناجحة كما هو متوقع
-        setServerError(registrationResponse.data?.message || 'فشل إنشاء الحساب، استجابة غير متوقعة من الخادم.');
+    const data = response.data;
+
+    if (response.status === 201 || (data && (data.success || data.status === 'success'))) {
+      setRegistrationSuccessMessage('تم إنشاء الحساب بنجاح! جاري تسجيل دخولك...');
+
+      const loginCredentials = {
+        email: formData.email,
+        password: formData.password,
+      };
+
+      dispatch(loginUser(loginCredentials))
+        .unwrap()
+        .then(() => {
+          navigate('/');
+        })
+        .catch((loginError) => {
+          setServerError(`تم التسجيل، ولكن فشل تسجيل الدخول التلقائي: ${loginError?.message || loginError || 'يرجى تسجيل الدخول يدويًا.'}`);
+          setTimeout(() => {
+            navigate('/login', {
+              state: { successMessage: 'تم التسجيل بنجاح، يرجى تسجيل الدخول الآن.' },
+            });
+          }, 3000);
+        });
+
+    } else {
+      let errorMessage = 'حدث خطأ غير متوقع أثناء إنشاء الحساب.';
+      if (data && data.error && typeof data.error === 'object') {
+        const messages = Object.values(data.error).flat();
+        const translated = messages.map(translateErrorMessage);
+        errorMessage = translated.join(' ');
+      } else if (data && data.message) {
+        errorMessage = data.message;
+      }
+      console.warn("Registration logical error (non-4xx/5xx response):", data);
+      setServerError(errorMessage);
+    }
+
+  } catch (err) {
+    console.error("❌ Error during registration (catch block):", err);
+
+    if (err.response && err.response.data) {
+      const responseData = err.response.data;
+      let serverErrorMessage = 'فشل إنشاء الحساب، يرجى المحاولة لاحقًا.';
+
+      if (responseData.error && typeof responseData.error === 'object') {
+        const errorMessages = [];
+        for (const key in responseData.error) {
+          if (Array.isArray(responseData.error[key])) {
+            responseData.error[key].forEach(msg => {
+              errorMessages.push(translateErrorMessage(msg));
+            });
+          }
+        }
+        if (errorMessages.length > 0) {
+          serverErrorMessage = errorMessages.join(' ');
+        } else if (responseData.message) {
+          serverErrorMessage = responseData.message;
+        }
+
+      } else if (responseData.message && typeof responseData.message === 'string') {
+        serverErrorMessage = responseData.message;
+      } else if (typeof responseData === 'string') {
+        serverErrorMessage = responseData;
       }
 
-    } catch (err) {
-      console.error("Register.jsx: Registration API error:", err.response?.data || err.message);
-      setServerError(err.response?.data?.message || 'حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى');
+      setServerError(serverErrorMessage);
+
+    } else if (err.request) {
+      setServerError('فشل الاتصال بالخادم. الرجاء التحقق من اتصالك بالإنترنت.');
+    } else {
+      setServerError('حدث خطأ غير متوقع أثناء إعداد الطلب.');
     }
-  };
-const togglePasswordVisibility = () => {
+  }
+};
+  const togglePasswordVisibility = () => {
     setShowPassword(prevShowPassword => !prevShowPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => { //  دالة جديدة لحقل التأكيد
+    setShowConfirmPassword(prevShowConfirmPassword => !prevShowConfirmPassword);
   };
 
   return (
@@ -161,17 +197,18 @@ const togglePasswordVisibility = () => {
         </Card.Header>
         <Card.Body className="p-4">
           {serverError && (
-            <Alert variant="danger" className="text-center" dismissible onClose={() => setServerError('')}>
+            <Alert variant="danger" className="text-center"  onClose={() => setServerError('')}>
               {serverError}
             </Alert>
           )}
-           {registrationSuccessMessage && !serverError && ( // عرض رسالة نجاح التسجيل فقط إذا لم يكن هناك خطأ
+          {registrationSuccessMessage && !serverError && (
             <Alert variant="success" className="text-center">
               {registrationSuccessMessage}
             </Alert>
           )}
 
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+            {/* حقل الاسم */}
             <Form.Group className="mb-3">
               <Form.Label className="d-flex align-items-center">
                 <i className="bi bi-person"></i> الاسم الكامل
@@ -187,6 +224,7 @@ const togglePasswordVisibility = () => {
               </Form.Control.Feedback>
             </Form.Group>
 
+            {/* حقل البريد الإلكتروني */}
             <Form.Group className="mb-3">
               <Form.Label className="d-flex align-items-center">
                 <i className="bi bi-envelope"></i> البريد الإلكتروني
@@ -202,36 +240,60 @@ const togglePasswordVisibility = () => {
               </Form.Control.Feedback>
             </Form.Group>
 
-           <Form.Group className="mb-4">
+            {/* حقل كلمة المرور */}
+            <Form.Group className="mb-3"> {/* تم تغيير mb-4 إلى mb-3 */}
               <Form.Label className="d-flex align-items-center">
                 <i className="bi bi-lock"></i> كلمة المرور
               </Form.Label>
-              <InputGroup className="password-input-group"> {/* <--- استخدام InputGroup */}
+              <InputGroup className="password-input-group">
                 <Form.Control
-                  type={showPassword ? 'text' : 'password'} // <--- تغيير النوع ديناميكيًا
+                  type={showPassword ? 'text' : 'password'}
                   {...register('password')}
                   isInvalid={!!errors.password}
-                  dir="rtl" // مهم لتوجيه النص داخل الحقل
+                  dir="rtl"
                 />
                 <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }}>
-                  <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i> {/* <--- أيقونة العين */}
+                  <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
                 </InputGroup.Text>
               </InputGroup>
-              <Form.Control.Feedback type="invalid" className={errors.password ? 'd-block' : ''}> {/* d-block لإظهارها دائمًا */}
+              <Form.Control.Feedback type="invalid" className={errors.password ? 'd-block' : ''}>
                 {errors.password?.message}
               </Form.Control.Feedback>
-              {!errors.password && ( // عرض التلميح فقط إذا لم يكن هناك خطأ
+              {/* يمكنك إبقاء التلميح أو تعديله إذا أردت */}
+              {!errors.password && (
                 <Form.Text className="text-muted">
-                  يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل وتشمل حروف كبيرة وصغيرة وأرقام.
+                  يجب أن تكون كلمة المرور 8 أحرف على الأقل.
                 </Form.Text>
               )}
             </Form.Group>
 
+            {/* 2. إضافة حقل تأكيد كلمة المرور في JSX */}
+            <Form.Group className="mb-4">
+              <Form.Label className="d-flex align-items-center">
+                <i className="bi bi-shield-lock"></i> تأكيد كلمة المرور
+              </Form.Label>
+              <InputGroup className="password-input-group">
+                <Form.Control
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  {...register('password_confirmation')}
+                  isInvalid={!!errors.password_confirmation}
+                  dir="rtl"
+                />
+                <InputGroup.Text onClick={toggleConfirmPasswordVisibility} style={{ cursor: 'pointer' }}>
+                  <i className={`bi ${showConfirmPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
+                </InputGroup.Text>
+              </InputGroup>
+              <Form.Control.Feedback type="invalid" className={errors.password_confirmation ? 'd-block' : ''}>
+                {errors.password_confirmation?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+
             <div className="d-grid gap-2">
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 type="submit"
-                disabled={isRegistering} // استخدام isRegistering من formState
+                disabled={isRegistering}
                 className="py-2"
               >
                 {isRegistering ? (

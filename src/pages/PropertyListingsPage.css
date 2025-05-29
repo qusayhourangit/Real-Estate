@@ -62,4 +62,61 @@
   }
   .form-select{
     padding-right: 30px;
-  }
+  }/* PropertyListingsPage.css (أو ملف CSS عام) */
+.filter-sidebar .form-check-input:checked {
+  background-color: #e38e49; /* لون برتقالي عندما يكون فعالاً */
+  border-color: #e38e49;
+}
+
+.filter-sidebar .form-check-input {
+  cursor: pointer;
+}
+
+.filter-sidebar .form-check-label {
+  cursor: pointer;
+}/* PropertyListingsPage.css (أو ملف CSS عام) */
+
+.custom-filter-switch .form-check-input {
+  /* --- لتكبير المفتاح قليلاً --- */
+  width: 3em;      /* زيادة العرض (كان 2.5em أو القيمة الافتراضية) */
+  height: 1.5em;   /* زيادة الارتفاع (كان 1.25em أو القيمة الافتراضية) */
+  margin-top: 0.25em; /* تعديل الهامش العلوي ليتناسب مع حجم النص */
+  cursor: pointer;
+  
+  /* --- وضعية الإطفاء (OFF) --- */
+  background-color: #e9ecef; /* لون خلفية المسار عندما يكون المفتاح مطفأ (رمادي فاتح) */
+  border-color: #adb5bd;     /* لون إطار المسار */
+
+  /* الدائرة (المقبض) بلون #f58220 عندما يكون المفتاح مطفأ */
+  /* يتم ذلك بتغيير لون التعبئة (fill) في الـ SVG الخاص بالمقبض */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23f58220'/%3e%3c/svg%3e");
+  
+  /* إزالة تأثيرات التركيز (focus) الافتراضية إذا أردت، أو تخصيصها */
+  box-shadow: none; 
+}
+
+.custom-filter-switch .form-check-input:focus {
+  border-color: rgba(245, 130, 32, 0.5); /* لون إطار أفتح عند التركيز (برتقالي شفاف) */
+  box-shadow: 0 0 0 0.25rem rgba(245, 130, 32, 0.25); /* ظل خفيف بلون برتقالي عند التركيز */
+  
+  /* الحفاظ على لون الدائرة برتقالي (#f58220) عند التركيز وهو مطفي */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23f58220'/%3e%3c/svg%3e");
+}
+
+/* --- وضعية التشغيل (ON) --- */
+.custom-filter-switch .form-check-input:checked {
+  /* لون خلفية المسار #f58220 عندما يكون المفتاح شغالاً */
+  background-color: #f58220;
+  border-color: #f58220; /* لون إطار المسار ليطابق الخلفية */
+
+  /* الدائرة (المقبض) بيضاء عندما يكون المفتاح شغالاً */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e"); /* %23ffffff للون الأبيض */
+}
+
+/* تخصيص النص بجانب المفتاح إذا لزم الأمر */
+.custom-filter-switch .form-check-label {
+  padding-left: 0.75em; /* تعديل المسافة بين المفتاح والنص */
+  /* يمكنك تعديل حجم الخط هنا إذا أردت */
+  /* font-size: 1rem; */
+  cursor: pointer;
+}

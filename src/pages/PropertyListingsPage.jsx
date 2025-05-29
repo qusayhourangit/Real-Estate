@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
-import PropertyCard from './PropertyCard';
+import PropertyCard from './PropertyCard'; // تأكد أن PropertyCard يستقبل ويعرض بيانات is_featured بشكل صحيح
 import { motion } from 'framer-motion';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './PropertyListingsPage.css';
+import './PropertyListingsPage.css'; // يمكنك إضافة أنماط للمفتاح الجديد هنا
 import api from '../API/api';
 import { useSelector } from 'react-redux';
 
@@ -32,6 +32,7 @@ const PropertyListingsPage = () => {
       minPrice: params.get('min_price') || '',
       maxPrice: params.get('max_price') || '',
       location: params.get('location') || location.state?.initialLocation || '',
+      showFeaturedOnly: params.get('featured') === 'true', // ---!!! إضافة فلتر العقارات المميزة !!!---
     };
   });
 
@@ -52,29 +53,30 @@ const PropertyListingsPage = () => {
   const fetchAllProperties = useCallback(async () => {
     setLoading(true);
     setError(null);
-  
+
     try {
       let allProperties = [];
       let currentPage = 1;
       let lastPage = 1;
-  
+
       do {
         const res = await api.get(`/realestate?page=${currentPage}`);
         const responseData =
           res.data?.data?.properties ||
           res.data?.data ||
           res.data;
-  
+
         const pageData = Array.isArray(responseData?.data)
           ? responseData.data
-          : [];
-  
+          : (Array.isArray(responseData) ? responseData : []); // مرونة أكبر
+
         allProperties = [...allProperties, ...pageData];
-  
+
         currentPage++;
         lastPage = responseData?.last_page || 1;
       } while (currentPage <= lastPage);
-  console.log("PropertyListingsPage - All properties fetched from API:", JSON.stringify(allProperties, null, 2));
+      // قم بإزالة التعليق من السطر التالي إذا أردت التأكد من أن حقل is_featured يصل من الـ API
+      // console.log("PropertyListingsPage - All properties fetched (check for 'is_featured'):", JSON.stringify(allProperties[0], null, 2));
       setAllFetchedProperties(allProperties);
     } catch (err) {
       setError(err.message || 'حدث خطأ أثناء تحميل العقارات');
@@ -95,7 +97,7 @@ const PropertyListingsPage = () => {
     if (filters.purpose !== 'any') filtered = filtered.filter(p => p.purpose === filters.purpose);
     if (filters.type !== 'any') filtered = filtered.filter(p => p.type === filters.type);
 
-    if (filters.bedrooms !== 'any' && filters.type !== 'commercial') {
+    if (filters.bedrooms !== 'any' && filters.type !== 'commercial' && filters.type !== 'land') { // لا تطبق فلتر الغرف على التجاري أو الأراضي
       filtered = filtered.filter(p => {
         const beds = parseInt(p.bedrooms);
         if (isNaN(beds)) return false;
@@ -114,28 +116,51 @@ const PropertyListingsPage = () => {
     }
 
     if (filters.location) {
-      const loc = filters.location.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.address?.toLowerCase().includes(loc) ||
-        p.title?.toLowerCase().includes(loc)
-      );
+      const loc = filters.location.toLowerCase().trim();
+      if (loc) { // تأكد أن البحث ليس فارغاً بعد trim
+        filtered = filtered.filter(p =>
+          p.address?.toLowerCase().includes(loc) ||
+          p.title?.toLowerCase().includes(loc)
+        );
+      }
     }
+
+    // ---!!! تطبيق فلتر العقارات المميزة !!!---
+    if (filters.showFeaturedOnly) {
+      // تأكد أن العقارات لديك تحتوي على حقل is_featured (عادة 1 للـ true و 0 للـ false)
+      filtered = filtered.filter(p => p.is_featured === 1 || p.is_featured === true || String(p.is_featured) === "1");
+    }
+    // ---!!! نهاية تطبيق الفلتر !!!---
 
     setFilteredProperties(filtered);
 
+    // تحديث URL بناءً على الفلاتر
     const searchParams = new URLSearchParams();
-    Object.entries(filters).forEach(([k, v]) => {
-      if (v && v !== 'any') {
-        const key = k === 'minPrice' ? 'min_price' : k === 'maxPrice' ? 'max_price' : k;
-        searchParams.set(key, v);
+    Object.entries(filters).forEach(([key, value]) => {
+      if (key === 'showFeaturedOnly') {
+        if (value === true) { // أضف للـ URL فقط إذا كانت true
+          searchParams.set('featured', 'true');
+        }
+      } else if (value && value !== 'any' && value !== '') {
+        const paramKey = key === 'minPrice' ? 'min_price' : key === 'maxPrice' ? 'max_price' : key;
+        searchParams.set(paramKey, value);
       }
     });
-    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true, state: {} });
-  }, [filters, allFetchedProperties, location.pathname, navigate]);
+
+    const newSearchString = searchParams.toString();
+    // تحديث الـ URL فقط إذا تغيرت البارامترات لتجنب إعادة التوجيه غير الضرورية
+    if (location.search.substring(1) !== newSearchString) {
+      navigate(`${location.pathname}?${newSearchString}`, { replace: true, state: {} });
+    }
+
+  }, [filters, allFetchedProperties, location.pathname, location.search, navigate]);
 
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' || type === 'switch' ? checked : value
+    }));
   };
 
   const resetFilters = () => {
@@ -146,11 +171,13 @@ const PropertyListingsPage = () => {
       minPrice: '',
       maxPrice: '',
       location: '',
+      showFeaturedOnly: false, // ---!!! إعادة تعيين فلتر العقارات المميزة !!!---
     });
-    navigate(location.pathname, { replace: true, state: {} });
+    // navigate(location.pathname, { replace: true, state: {} }); // سيتم التعامل مع هذا بواسطة useEffect
   };
 
   const handleToggleFavorite = async (propertyId) => {
+    // ... (الكود كما هو)
     if (!isAuthenticated || !token) return navigate('/login');
     if (!propertyId) return;
 
@@ -166,7 +193,6 @@ const PropertyListingsPage = () => {
         ? await api.delete(`/user/remove-saved-property/${propertyId}`, config)
         : await api.post(`/user/saved-property/${propertyId}`, {}, config);
     } catch {
-      // rollback
       isSaved ? newSet.add(propertyId) : newSet.delete(propertyId);
       setSavedProperties(new Set(newSet));
     } finally {
@@ -178,14 +204,14 @@ const PropertyListingsPage = () => {
     <Container fluid className="my-4 property-listings-page" dir="rtl">
       <Row>
         <Col lg={3} className="mb-4">
-          <div className="p-3 border rounded shadow-sm sticky-top">
+          <div className="p-3 border rounded shadow-sm sticky-top filter-sidebar"> {/* أضفت كلاس filter-sidebar */}
             <h5 className="mb-3 fw-bold border-bottom pb-2">
               <i className="bi bi-funnel-fill text-primary me-2"></i>تصفية البحث
             </h5>
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>الموقع / العنوان</Form.Label>
-                <Form.Control name="location" value={filters.location} onChange={handleFilterChange} />
+                <Form.Control name="location" value={filters.location} onChange={handleFilterChange} placeholder="مثال: المزة، دمشق" />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>الغرض</Form.Label>
@@ -199,11 +225,12 @@ const PropertyListingsPage = () => {
                 <Form.Label>نوع العقار</Form.Label>
                 <Form.Select name="type" value={filters.type} onChange={handleFilterChange}>
                   <option value="any">الكل</option>
-                  <option value="house">شقة</option>
-                  <option value="commercial">محل تجاري</option>
+                  <option value="house">سكني (شقة، فيلا..)</option> {/* تم تعديل النص */}
+                  <option value="commercial">تجاري (محل، مكتب)</option> {/* تم تعديل النص */}
+                  <option value="land">أرض</option> {/* إضافة خيار أرض إذا كان مدعوماً */}
                 </Form.Select>
               </Form.Group>
-              {(filters.type === 'any' || filters.type === 'house') && (
+              {(filters.type === 'any' || filters.type === 'house') && ( // عرض فلتر الغرف فقط للسكني أو الكل
                 <Form.Group className="mb-3">
                   <Form.Label>غرف النوم</Form.Label>
                   <Form.Select name="bedrooms" value={filters.bedrooms} onChange={handleFilterChange}>
@@ -217,15 +244,30 @@ const PropertyListingsPage = () => {
                 </Form.Group>
               )}
               <Form.Group className="mb-3">
-                <Form.Label>السعر الأدنى</Form.Label>
-                <Form.Control type="number" name="minPrice" value={filters.minPrice} onChange={handleFilterChange} />
+                <Form.Label>السعر الأدنى (ل.س)</Form.Label>
+                <Form.Control type="number" name="minPrice" value={filters.minPrice} onChange={handleFilterChange} placeholder="مثال: 5000000" />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>السعر الأعلى</Form.Label>
-                <Form.Control type="number" name="maxPrice" value={filters.maxPrice} onChange={handleFilterChange} />
+                <Form.Label>السعر الأعلى (ل.س)</Form.Label>
+                <Form.Control type="number" name="maxPrice" value={filters.maxPrice} onChange={handleFilterChange} placeholder="مثال: 25000000" />
               </Form.Group>
-              <Button variant="outline-secondary" className="w-100" onClick={resetFilters}>
-                <i className="bi bi-arrow-counterclockwise me-1"></i>إعادة تعيين
+
+              {/* ---!!! مفتاح تبديل عرض العقارات المميزة !!!--- */}
+              <Form.Group className="mb-3 pt-2 border-top">
+                <Form.Check
+                  type="switch"
+                  id="show-featured-switch"
+                  label="عرض العقارات المميزة فقط"
+                  name="showFeaturedOnly"
+                  checked={filters.showFeaturedOnly}
+                  onChange={handleFilterChange}
+                  className="custom-filter-switch" // <--- تأكد من وجود هذا الكلاس
+                />
+              </Form.Group>
+              {/* ---!!! نهاية مفتاح التبديل !!!--- */}
+
+              <Button variant="outline-secondary" className="w-100 mt-2" onClick={resetFilters}>
+                <i className="bi bi-arrow-counterclockwise me-1"></i>إعادة تعيين الفلاتر
               </Button>
             </Form>
           </div>
@@ -233,22 +275,23 @@ const PropertyListingsPage = () => {
 
         <Col lg={9}>
           {loading ? (
-            <div className="text-center my-5">
-              <Spinner animation="border" variant="primary" />
-              <p className="mt-3">جاري تحميل العقارات...</p>
+            <div className="text-center my-5 py-5"> {/* زيادة الحشو العمودي */}
+              <Spinner animation="border" variant="primary" style={{ width: '3rem', height: '3rem' }} />
+              <p className="mt-3 fs-5">جاري تحميل العقارات...</p>
             </div>
           ) : error ? (
-            <Alert variant="danger">{error}</Alert>
+            <Alert variant="danger" className="py-4 text-center fs-5">{error}</Alert>
           ) : filteredProperties.length === 0 ? (
-            <div className="text-center my-5">
-              <i className="bi bi-search display-4 text-muted"></i>
-              <h4 className="mt-3">لا توجد نتائج</h4>
+            <div className="text-center my-5 py-5">
+              <i className="bi bi-search display-1 text-muted mb-3"></i> {/* تكبير أيقونة البحث */}
+              <h3 className="mt-3">لا توجد عقارات تطابق معايير بحثك</h3>
+              <p className="text-muted">حاول تعديل الفلاتر أو إعادة تعيينها.</p>
             </div>
           ) : (
             <motion.div variants={listingsContainerVariants} initial="hidden" animate="visible">
-              <Row xs={1} sm={2} md={2} lg={3} className="g-4">
+              <Row xs={1} sm={1} md={2} lg={3} className="g-4"> {/* تعديل sm ليكون 1 */}
                 {filteredProperties.map((property) => (
-                  <motion.div key={property.id} variants={propertyCardVariants}>
+                  <motion.div key={property.id} variants={propertyCardVariants} className="d-flex"> {/* إضافة d-flex */}
                     <PropertyCard
                       property={property}
                       isSaved={savedProperties.has(property.id)}

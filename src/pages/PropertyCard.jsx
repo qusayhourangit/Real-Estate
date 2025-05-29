@@ -1,96 +1,94 @@
 // PropertyCard.js
-
-import React from 'react'; // Removed useState, useEffect
-import { useNavigate } from 'react-router-dom'; // Keep Link if you decide to add it back inside
-import { Card, Badge, Button, Spinner } from 'react-bootstrap'; // Added Spinner
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, Badge, Button, Spinner } from 'react-bootstrap';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './PropertyCard.css'; // Make sure this CSS file exists and is styled correctly
-import api from '../API/api'; // Keep for image base URL or remove if not needed
+import './PropertyCard.css'; // تأكد أن هذا الملف سيحتوي على الأنماط الجديدة
 
-// --- Helper Functions (Define or Import these) ---
-// You can move these to a separate utils file and import them
+// --- Helper Functions ---
 const formatPrice = (price) => {
-  // Simplified price display - assumes price is a number or null/undefined
   if (price == null || isNaN(Number(price))) {
-     return 'السعر عند الطلب';
+    return 'السعر عند الطلب';
   }
-  // Using basic toLocaleString for number formatting with Syrian Pounds symbol
   return `${Number(price).toLocaleString('en-US')} ل.س`;
 };
 
 const getDealTypeColor = (type) => type === 'sale' ? 'danger' : type === 'rent' ? 'success' : 'primary';
 const getPropertyTypeColor = (type) => type === 'house' ? 'info' : type === 'commercial' ? 'warning' : 'secondary';
-const getCategoryArabic = (type) => type === 'house' ? 'شقة' : type === 'commercial' ? 'محل' : 'نوع غير معروف';
+const getCategoryArabic = (type) => {
+    if (type === 'house' || type === 'apartment' || type === 'villa' || type === 'residential') return 'سكني';
+    if (type === 'commercial') return 'تجاري';
+    if (type === 'land') return 'أرض';
+    return 'غير محدد';
+};
 const getTypeArabic = (purpose) => purpose === 'sale' ? 'للبيع' : purpose === 'rent' ? 'للإيجار' : 'غير محدد';
 
-// --- Component Definition ---
-// ===== ACCEPT PROPS FROM PARENT =====
 const PropertyCard = ({ property, isSaved, onToggleFavorite, isSaving }) => {
   const navigate = useNavigate();
 
-  // Component now relies entirely on props for saved state and actions
-
   if (!property) {
-    // Optional: Render a placeholder or null if property data is missing
     console.warn("PropertyCard received null or undefined property data.");
     return null;
   }
+  
+  const isPropertyTrulyFeatured = property.is_featured === 1 || String(property.is_featured) === "1";
+  const isFromVerifiedAgent = property.is_featured === 1 || String(property.is_featured) === "1";
 
-  // Image URL logic
-    const imageUrl = (
-      property.images &&
-      Array.isArray(property.images) &&
-      property.images.length > 0 &&
-      property.images[0] &&
-      typeof property.images[0].filename === 'string' &&
-      (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://'))
+  const imageUrl = (
+    property.images &&
+    Array.isArray(property.images) &&
+    property.images.length > 0 &&
+    property.images[0] &&
+    typeof property.images[0].url === 'string' &&
+    (property.images[0].url.startsWith('http://') || property.images[0].url.startsWith('https://'))
   )
-  ? property.images[0].filename // استخدم الرابط الكامل مباشرة
-  : 'https://via.placeholder.com/300x200?text=NoPropImage'; // صورة افتراضية
+    ? property.images[0].url
+    : 'https://via.placeholder.com/300x200?text=NoImage';
 
 
-  // Handler for clicking the entire card
   const handleCardClick = () => {
     if (property.id) {
-      navigate(`/properties/${property.id}`); // Navigate to property details
+      navigate(`/properties/${property.id}`);
     } else {
       console.warn("Property ID is missing, cannot navigate.");
     }
   };
 
-  // Handler for clicking the favorite button ONLY
   const handleFavoriteClick = (e) => {
-    e.stopPropagation(); // IMPORTANT: Prevent event from bubbling up to the Card's onClick
-    // Check if onToggleFavorite is a valid function before calling
+    e.stopPropagation();
     if (typeof onToggleFavorite === 'function') {
-      onToggleFavorite(); // Execute the function passed down from the parent component
+      onToggleFavorite();
     } else {
       console.error("PropertyCard: onToggleFavorite prop is missing or not a function.");
-      // You might want to redirect to login here if you can check auth state,
-      // but ideally, the parent should handle the auth check before passing the function.
     }
   };
 
   return (
     <Card
-      className="property-card h-100 border-0 rounded-4 overflow-hidden shadow-sm" // Added shadow-sm back, adjust as needed
+      className={`property-card h-100 border-0 rounded-4 overflow-hidden shadow-sm ${isPropertyTrulyFeatured ? 'truly-featured-property-card' : ''}`}
       onClick={handleCardClick}
-      style={{ cursor: 'pointer' }} // Make it clear the card is clickable
+      style={{ cursor: 'pointer' }}
     >
-      <div className="position-relative">
-         <Card.Img 
-          variant="top" 
-          src={imageUrl} // <--- استخدام imageUrl المعدلة
+      <div className="position-relative property-card-image-container"> {/* أضفت كلاس هنا للتحكم الدقيق إذا لزم الأمر */}
+        {/* --- شارة "عقار مميز" العلوية (أيقونة الإشارة المرجعية البرتقالية) --- */}
+        {isPropertyTrulyFeatured && (
+                          <div className="top-featured-badge">
+                            <i class="bi bi-bookmark-check-fill"></i>
+                          </div>
+                        )}
+        
+        <Card.Img
+          variant="top"
+          src={imageUrl}
           alt={property.title || "صورة عقار"}
-          style={{ height: '200px', objectFit: 'cover' }}
+          className="property-card-image" // استخدام الكلاس من ملف CSS الخاص بك
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = 'https://via.placeholder.com/300x200?text=ImgError';
           }}
         />
 
-        {/* Property Tags (Positioned Top-Right) */}
         <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
           {property.purpose && (
             <Badge bg={getDealTypeColor(property.purpose)} className="rounded-pill px-2 py-1 text-white small">
@@ -104,49 +102,73 @@ const PropertyCard = ({ property, isSaved, onToggleFavorite, isSaving }) => {
           )}
         </div>
 
-        {/* Favorite Button (Positioned Top-Left) */}
-        {/* Conditionally render the button only if the handler function exists */}
         {typeof onToggleFavorite === 'function' && (
           <Button
-            variant="light" // Base variant
-            className="fav-button position-absolute top-0 start-0 m-2 rounded-circle p-1 d-flex align-items-center justify-content-center"
-            style={{ width: '35px', height: '35px', border: 'none', zIndex: 2 }} // Ensure button is clickable above image potentially
-            onClick={handleFavoriteClick} // Use the specific favorite click handler
-            disabled={isSaving} // Disable button during save operation (using prop)
-            aria-label={isSaved ? "إزالة من المفضلة" : "إضافة للمفضلة"} // Accessibility label (using prop)
+            variant="light"
+            className="fav-button position-absolute top-0 start-0 m-2 rounded-circle p-1 d-flex align-items-center justify-content-center" // fav-button بدلاً من favorite-btn-card
+            style={{ width: '35px', height: '35px', border: 'none', zIndex: 3 }} // z-index أعلى من featured-tag
+            onClick={handleFavoriteClick}
+            disabled={isSaving}
+            aria-label={isSaved ? "إزالة من المفضلة" : "إضافة للمفضلة"}
           >
-            {/* Display Spinner or Heart Icon based on props */}
             {isSaving ? (
-              <Spinner animation="border" size="sm" variant="secondary" /> // Show spinner when saving
-            ) : isSaved ? ( // Check the isSaved prop
-              <FaHeart className="text-danger" /> // Show filled heart if saved
+              <Spinner animation="border" size="sm" variant="secondary" />
+            ) : isSaved ? (
+              <FaHeart className="text-danger" />
             ) : (
-              <FaRegHeart className="text-secondary" /> // Show empty heart if not saved
+              <FaRegHeart className="text-secondary" />
             )}
           </Button>
         )}
       </div>
 
-      {/* Card Body Content */}
       <Card.Body className="d-flex flex-column p-3">
-        {/* Price */}
-        <div className="fw-bold fs-5 mb-1" style={{ color: '#d6762e' }}>
+        <div className="fw-bold fs-5 mb-2" style={{ color: '#d6762e' }}> {/* السعر */}
           {formatPrice(property.price)}
           {property.purpose === 'rent' && <span className="rent-period text-muted small"> / شهري</span>}
         </div>
 
-        {/* Title */}
-        <h5 className="card-title text-truncate mb-2" style={{color: '#333'}}> {/* Ensure title is not the link text */}
-          {property.title || 'عنوان غير متوفر'}
+        {/* --- شارة "وكيل معتمد" --- */}
+      
+        
+        {/* تعديل العنوان لضبط المسافة العلوية */}
+        <h5 
+            className={`card-title text-truncate mb-2 ${!isFromVerifiedAgent ? 'mt-0' : ''}`} 
+            style={{ color: '#333' }} 
+            // إذا لم تكن هناك شارة وكيل، العنوان يقترب من السعر (الذي لديه mb-2)
+            // إذا كانت شارة الوكيل موجودة، فهي لديها mb-2, لذا العنوان لا يحتاج margin-top كبير
+        >
+          {property.title || 'عنوان غير متوفر'}  
         </h5>
 
-        {/* Address (Pushed to the bottom) */}
-        <p className="card-text small text-muted mt-auto mb-0 text-truncate">
-          {/* Make sure Bootstrap Icons CSS is loaded */}
-          <i className="bi bi-geo-alt-fill me-1" style={{ color: '#e38e49' }}></i>
-          {property.address || 'العنوان غير محدد'}
+        <p className="card-text small text-muted mt-auto mb-0 text-truncate property-card-address"> {/* الموقع */}
+          <i className="bi bi-geo-alt-fill me-1"></i> {/* سيتم تلوين الأيقونة عبر CSS */}
+          {property.address || 'العنوان غير محدد'} {isFromVerifiedAgent && (
+                                      <Badge className="verified-agent-info-badge mb-2" > {/* تمت إزالة 'pill' و 'bg' */}
+                                        <i className="bi bi-patch-check-fill"></i> {/* الأيقونة، يمكن إزالتها إذا لم تعد مرغوبة */}
+                                        <span>وكيل معتمد</span> {/* وضع النص في span للتحكم الأفضل إذا لزم الأمر */}
+                                      </Badge>
+                                    )}
         </p>
       </Card.Body>
+      <div className="d-flex justify-content-around text-muted py-2 border-top det-icn">
+            {property.type === 'commercial' ? ( 
+              property.area > 0 && (
+                <div className="d-flex align-items-center gap-1">
+                  <i className="bi bi-aspect-ratio"></i>
+                  <span>{property.area} م²</span>
+                </div>
+              )
+            ) : ( 
+              <>
+                {property.area > 0 && ( <div className="d-flex align-items-center gap-1"> <i className="bi bi-aspect-ratio"></i> <span>{property.area} م²</span> </div> )}
+                {property.bedrooms > 0 && ( <div className="d-flex align-items-center gap-1"> <i className="bi bi-door-closed-fill"></i> <span>{property.bedrooms}</span> </div> )}
+                {property.bathrooms > 0 && ( <div className="d-flex align-items-center gap-1"> <i className="bi bi-droplet-half"></i> <span>{property.bathrooms}</span> </div> )}
+                {(property.livingRooms > 0 || property.livingrooms > 0) && ( <div className="d-flex align-items-center gap-1"> <i className="bi bi-display"></i> <span>{property.livingRooms || property.livingrooms}</span> </div> )}
+                {property.balconies > 0 && ( <div className="d-flex align-items-center gap-1"> <i className="bi bi-border-width"></i> <span>{property.balconies}</span> </div> )}
+              </>
+            )}
+      </div>
     </Card>
   );
 };

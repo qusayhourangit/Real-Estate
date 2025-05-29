@@ -1,6 +1,8 @@
 
 .features {
     background-color: #ffffff; /* خلفية بيضاء للقسم */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
   }
   
   .features .section-title {
@@ -28,6 +30,7 @@
     border: 1px solid #e9ecef;
     border-radius: 10px !important; /* تأكيد الحواف الدائرية */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
   }
   
   .feature-card:hover {

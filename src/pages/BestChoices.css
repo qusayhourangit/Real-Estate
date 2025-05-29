@@ -219,3 +219,228 @@
 .best-choices-nav {
  display: none !important;
 }
+.btn-show-all-properties {
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
+
+.btn-show-all-properties:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+.det-icn i{
+  color: #d6762e;
+}.property-card .trusted-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+/* --- BestChoices.css --- */
+
+/* أنماط عامة لمكون best-choices إذا لزم الأمر */
+
+
+.best-choices .section-title {
+  font-weight: 700;
+  color: #343a40; /* لون عنوان القسم */
+}
+
+/* أنماط بطاقة العقار */
+.property-card {
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  border-radius: 0.5rem; /* زوايا دائرية أكثر نعومة */
+  overflow: hidden; /* لضمان أن الصورة لا تتجاوز الإطار الدائري */
+  border: 1px solid #dee2e6; /* إطار افتراضي خفيف */
+  display: flex; /* لضمان أن Card.Body و footer يملآن المساحة */
+  flex-direction: column;
+  height: 100%; /* لجعل كل البطاقات بنفس الارتفاع داخل السلايدر */
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.property-card .property-image {
+  transition: transform 0.3s ease-in-out;
+}
+
+.property-card:hover .property-image {
+  transform: scale(1.05); /* تكبير خفيف للصورة عند المرور */
+}
+
+.property-card .card-body {
+  padding: 1rem; /* تعديل الـ padding الداخلي للـ body */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* لجعل الـ body يملأ المساحة المتاحة */
+}
+
+.property-card .card-title {
+  font-size: 1.1rem; /* حجم خط العنوان */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #212529;
+  /* للتحكم في طول العنوان إذا كان طويلاً جداً */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; 
+}
+
+
+.property-card .card-text {
+  font-size: 0.85rem; /* حجم خط أصغر للعنوان الفرعي (مثل الموقع) */
+  margin-bottom: 0.75rem; /* مسافة بعد النص */
+}
+.property-card .card-text .IAD { /* أيقونة الموقع */
+  color: #e38e49; /* لون الأيقونة - برتقالي */
+}
+
+
+.property-card .det-icn { /* قسم الأيقونات السفلية */
+  font-size: 0.8rem;
+  padding: 0.75rem 1rem; /* تعديل الـ padding */
+}
+.property-card .det-icn .d-flex {
+    align-items: center;
+}
+.property-card .det-icn i {
+    margin-right: 0.3rem; /* مسافة بين الأيقونة والنص */
+    color: #6c757d; /* لون الأيقونات */
+}
+
+
+/* --- شارة العقار الموثوق/المميز --- */
+.top-featured-badge {
+  position: absolute;
+  top: 0px;
+  bottom: -240px;    /* تعديل المسافة من الأعلى */
+  left: 0%;
+  color: white;
+  padding: 5px 12px; /* تعديل الحشو ليتناسب مع حجم الخط */
+  font-size: 0.78rem; /* تعديل حجم الخط */
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap; /* لمنع التفاف النص */
+}
+
+.top-featured-badge .bi-patch-check-fill {
+  font-size: 1em; /* حجم الأيقونة ليكون بنفس حجم النص تقريباً */
+  margin-left: 5px; /* Bootstrap icons عادة ما تأخذ margin-right إذا كانت me-1، هنا للغة العربية استخدمنا margin-left */
+                      /* بما أن الشارة نفسها inline-flex، يمكن التحكم بالمسافة من النص مباشرة */
+}
+.top-featured-badge span {
+    margin-left: 5px; /* مسافة بين الأيقونة والنص */
+}
+.top-featured-badge i {
+  color: #E7A400;
+    font-size: 30px;
+}
+.verified-agent-info-badge {
+  font-size: 0.75rem;  /* حجم الخط، يمكنك تعديله */
+  padding: 0.4em 0.8em; /* الحشوة الداخلية للشارة */
+  
+  background-color: #FFC107 !important; /* لون الخلفية الذهبي/الأصفر (لون Bootstrap warning) */
+  /* يمكنك تجربة ألوان ذهبية أخرى مثل:
+     #DAA520 (GoldenRod)
+     #FDB813 (Amber/Gold جميل)
+     #EAAA00 (أغمق قليلاً)
+  */
+  color: #212529 !important; /* لون النص داكن (لون Bootstrap dark) لتباين جيد */
+  /* يمكنك استخدام #000000 للأسود الصريح أو #4A3B00 لبني داكن */
+    margin-right: 124px;
+
+  border-radius: 0.25rem; /* زوايا دائرية قياسية للـ badge، تطابق الصورة تقريباً */
+  /* إذا أردت زوايا أكثر استدارة قليلاً: border-radius: 6px; */
+
+  border: 1px solid #E7A400; /* إطار بلون ذهبي أغمق قليلاً لإعطاء عمق (اختياري) */
+  /* أو لإزالة الإطار: border: none; */
+  /* أو إطار بنفس لون الخلفية: border: 1px solid #FFC107; */
+  
+  display: inline-flex; /* لمحاذاة الأيقونة والنص بشكل جيد */
+  align-items: center;
+  font-weight: 600;    /* خط أعرض قليلاً */
+  text-shadow: none;     /* إزالة أي ظلال نص افتراضية قد تأتي من Badge */
+  /* mb-2 موجودة في JSX، إذا أردت التحكم بالهامش السفلي من هنا، أزلها من JSX */
+}
+
+.verified-agent-info-badge .bi-patch-check-fill {
+  /* لون الأيقونة سيرث لون النص (color) من الكلاس الأب */
+  font-size: 1em;         /* حجم الأيقونة بالنسبة للنص */
+  margin-left: 0.4em;     /* مسافة بين الأيقونة والنص (لأن النص عربي) */
+                          /* إذا كانت الأيقونة قبل النص بالإنجليزية، استخدم margin-right */
+}
+
+ .det-icn i {
+    color: #e38e49 !important;
+  }
+  
+/* --- كلاس إضافي لتمييز بطاقة العقار الموثوق بالكامل (اختياري) --- */
+.property-card.truly-featured-property-card {
+  border-color: #E7A400; /* !! إطار بلون برتقالي !! */
+  border-width: 2px;
+  box-shadow: 0 5px 15px rgba(227, 142, 73, 0.2); /* ظل برتقالي خفيف */
+}
+
+/* أنماط أزرار التنقل الخاصة بـ Swiper (إذا لم تكن موجودة لديك) */
+.custom-swiper-button {
+  position: absolute;
+  top: 40%; /* تعديل لتوسيطها أكثر على الصورة */
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.custom-swiper-button:hover {
+  background-color: #e38e49; /* لون برتقالي عند المرور */
+  color: white;
+}
+.custom-swiper-button-prev {
+  left: -15px; /* تعديل ليكون خارج حدود السلايدر قليلاً */
+}
+.custom-swiper-button-next {
+  right: -15px; /* تعديل ليكون خارج حدود السلايدر قليلاً */
+}
+/* تعديل ليكون الأزرار داخل الكونتينر إذا كان أصغر */
+@media (max-width: 576px) {
+  .custom-swiper-button-prev {
+    left: 5px;
+  }
+  .custom-swiper-button-next {
+    right: 5px;
+  }
+}
+
+/* زر المفضلة */
+.fav-button {
+    background-color: rgba(255, 255, 255, 0.85) !important; /* لضمان ظهور الخلفية البيضاء */
+    border: 1px solid #eee !important;
+}
+.fav-button:hover {
+    background-color: rgba(230, 230, 230, 0.95) !important;
+}
+
+/* الوسوم (للبيع، للإيجار، نوع العقار) */
+.property-tags .badge {
+    font-size: 0.7rem; /* تصغير حجم خط الوسوم قليلاً */
+    padding: 0.3em 0.6em; /* تعديل الحشو */
+}

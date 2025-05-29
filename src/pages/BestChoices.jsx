@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // Link removed as Card is clickable
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from 'react-icons/fa';
@@ -7,11 +7,11 @@ import { motion } from 'framer-motion';
 import { Spinner, Alert, Button, Card, Badge } from 'react-bootstrap';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import './BestChoices.css'; // Import the CLEANED CSS file
-import api from '../API/api';
+import './BestChoices.css'; // تأكد أن هذا الملف CSS موجود ويحتوي على الأنماط
+import api from '../API/api'; // تأكد من صحة هذا المسار
 import { useSelector } from 'react-redux';
 
-// --- Animation Variants (Assume defined correctly) ---
+// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -24,19 +24,24 @@ const containerVariants = {
     }
   }
 };
-// const itemVariants = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }; // Uncomment if using motion.div per item
+
 const formatPrice = (price) => {
-  // Simplified price display - assumes price is a number or null/undefined
   if (price == null || isNaN(Number(price))) {
-     return 'السعر عند الطلب';
+    return 'السعر عند الطلب';
   }
-  // Using basic toLocaleString for number formatting with Syrian Pounds symbol
   return `${Number(price).toLocaleString('en-US')} ل.س`;
 };
+
 // --- Helper Functions ---
 const getDealTypeColor = (type) => type === 'sale' ? 'danger' : type === 'rent' ? 'success' : 'primary';
 const getPropertyTypeColor = (type) => type === 'house' ? 'info' : type === 'commercial' ? 'warning' : 'secondary';
-const getCategoryArabic = (type) => type === 'house' ? 'شقة' : type === 'commercial' ? 'محل' : 'نوع غير معروف';
+const getCategoryArabic = (type) => {
+  // تأكد أن هذه القيم تطابق القيم الفعلية التي تأتي من الـ API للحقل 'type'
+  if (type === 'house' || type === 'apartment' || type === 'villa' || type === 'residential') return 'سكني';
+  if (type === 'commercial') return 'تجاري';
+  if (type === 'land') return 'أرض';
+  return 'غير محدد'; // أو type إذا أردت عرض القيمة كما هي
+};
 const getTypeArabic = (purpose) => purpose === 'sale' ? 'للبيع' : purpose === 'rent' ? 'للإيجار' : 'غير محدد';
 
 const BestChoices = () => {
@@ -53,7 +58,6 @@ const BestChoices = () => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
-  // --- Data Fetching Callbacks ---
   const fetchSavedIds = useCallback(async () => {
     if (!isAuthenticated || !token) return;
     try {
@@ -65,7 +69,7 @@ const BestChoices = () => {
       );
       setSavedProperties(ids);
     } catch (err) {
-      console.error('Failed to fetch saved properties:', err);
+      console.error('BestChoices: Failed to fetch saved properties:', err);
     }
   }, [isAuthenticated, token]);
 
@@ -79,15 +83,21 @@ const BestChoices = () => {
       do {
         const res = await api.get(`/realestate?page=${currentPage}`);
         const responseData = res.data?.data?.properties || res.data?.data || res.data;
-        const pageData = Array.isArray(responseData?.data) ? responseData.data : [];
+        const pageData = Array.isArray(responseData?.data) ? responseData.data : (Array.isArray(responseData) ? responseData : []);
         allProperties = [...allProperties, ...pageData];
         currentPage++;
         lastPage = responseData?.last_page || 1;
       } while (currentPage <= lastPage);
-      console.log("BestChoices - All properties fetched from API:", JSON.stringify(allProperties, null, 2));
+
+      if (allProperties.length > 0) {
+        console.log("BestChoices - Data structure of the first property (check for 'is_featured'):", JSON.stringify(allProperties[0], null, 2));
+      } else {
+        console.log("BestChoices - No properties fetched to check data structure.");
+      }
+
       setProperties(allProperties);
     } catch (err) {
-      console.error('Failed to fetch properties:', err);
+      console.error('BestChoices: Failed to fetch properties:', err);
       setError(err.message || 'حدث خطأ أثناء تحميل العقارات');
       setProperties([]);
     } finally {
@@ -95,7 +105,6 @@ const BestChoices = () => {
     }
   }, []);
 
-  // --- useEffect Hooks ---
   useEffect(() => {
     fetchBestChoices();
   }, [fetchBestChoices]);
@@ -104,7 +113,6 @@ const BestChoices = () => {
     fetchSavedIds();
   }, [fetchSavedIds, propertyStatusCounter]);
 
-  // --- Event Handlers ---
   const handleToggleFavorite = async (e, id) => {
     e.stopPropagation();
     if (!isAuthenticated || !token) { navigate('/login'); return; }
@@ -124,8 +132,8 @@ const BestChoices = () => {
         ? await api.delete(`/user/remove-saved-property/${id}`, config)
         : await api.post(`/user/saved-property/${id}`, {}, config);
     } catch (error) {
-      console.error('Favorite toggle failed:', error);
-      setSavedProperties(prev => { // Revert UI
+      console.error('BestChoices: Favorite toggle failed:', error);
+      setSavedProperties(prev => {
         const reverted = new Set(prev);
         isSaved ? reverted.add(id) : reverted.delete(id);
         return reverted;
@@ -137,14 +145,13 @@ const BestChoices = () => {
 
   const handlePropertyClick = (id) => navigate(`/properties/${id}`);
 
-  // --- Render Logic ---
   return (
     <motion.section
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
       variants={containerVariants}
-      className="best-choices py-5"
+      className="best-choices py-5 container"
       dir="rtl"
     >
       <div className="container position-relative">
@@ -170,12 +177,16 @@ const BestChoices = () => {
 
         {!loading && !error && properties.length > 0 && (
           <>
-            {/* Custom Navigation Buttons */}
+            <motion.div dir='ltr' initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="d-flex justify-content-start mb-3">
+              <Button className="login-btn btn btn-lg shadow-sm" variant="outline-primary" onClick={() => navigate('/properties')}>
+                عرض كل العقارات <i className="bi bi-arrow-left-short"></i>
+              </Button>
+            </motion.div>
             <button ref={nextRef} className="custom-swiper-button custom-swiper-button-prev" aria-label="Previous Property">
-            <FaChevronLeft />
+              <FaChevronLeft />
             </button>
             <button ref={prevRef} className="custom-swiper-button custom-swiper-button-next" aria-label="Next Property">
-            <FaChevronRight />
+              <FaChevronRight />
             </button>
 
             <Swiper
@@ -188,99 +199,161 @@ const BestChoices = () => {
                 992: { slidesPerView: 3, spaceBetween: 20 },
                 1200: { slidesPerView: 4, spaceBetween: 20 },
               }}
-              navigation={{ // Link refs
+              navigation={{
                 prevEl: prevRef.current,
                 nextEl: nextRef.current,
               }}
-              onBeforeInit={(swiper) => { // Ensure refs assigned
-                 swiper.params.navigation.prevEl = prevRef.current;
-                 swiper.params.navigation.nextEl = nextRef.current;
+              onBeforeInit={(swiper) => {
+                swiper.params.navigation.prevEl = prevRef.current;
+                swiper.params.navigation.nextEl = nextRef.current;
               }}
               className="pb-4"
             >
-              {properties.map((property) => (
-                <SwiperSlide key={property.id} className="h-auto"> {/* Ensure slide adapts height */}
-                  {/* Removed motion.div for simplicity, add back with itemVariants if needed */}
-                  <Card
-                    className="property-card" // Main styling class
-                    onClick={() => handlePropertyClick(property.id)}
-                  >
-                    <div className="position-relative">
-         <Card.Img variant="top"
-    src={
-        // 1. تحقق أن property.images موجود وهو مصفوفة وغير فارغ.
-        // 2. تحقق أن العنصر الأول property.images[0] موجود.
-        // 3. تحقق أن property.images[0] لديه خاصية 'filename' (التي تحمل الرابط الكامل).
-        // 4. تحقق أن قيمة 'filename' هي سلسلة نصية (رابط URL صالح).
-        (
-            property.images &&
-            Array.isArray(property.images) &&
-            property.images.length > 0 &&
-            property.images[0] && // تأكد أن الكائن الأول موجود
-            typeof property.images[0].filename === 'string' && // تأكد أن filename هو سلسلة نصية
-            (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://')) // تأكد أنه رابط
-        )
-        ? property.images[0].filename // <--- استخدم الرابط الكامل مباشرة من 'filename'
-        : 'https://via.placeholder.com/400x250?text=NoSavedImg' // صورة افتراضية مميزة للمحفوظات
-    }
-    alt={property.title || 'صورة عقار'}
-    className="property-image" // تأكد أن لديك CSS لهذه الكلاسات
-    loading="lazy"
-    onError={(e) => {
-        console.error(`SavedProperties: Error loading image for property ID ${propertyId}. Attempted src: ${e.target.src}`, e);
-        e.target.onerror = null;
-        e.target.src = 'https://via.placeholder.com/400x250?text=SavedImgError'; // صورة خطأ مميزة
-    }}
-    style={{ height: '200px', objectFit: 'cover' }} // أسلوب بسيط لضمان حجم الصورة (اختياري)
-/>
-                      <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
-                        {property.purpose && (
-                          <Badge bg={getDealTypeColor(property.purpose)} className="rounded-pill px-2 py-1 text-white">
-                            {getTypeArabic(property.purpose)}
-                          </Badge>
+              {properties.map((property) => {
+                const isPropertyTrulyFeatured = property.is_featured === 1 || String(property.is_featured) === "1";
+                const isFromVerifiedAgent = property.is_featured === 1 || String(property.is_featured) === "1";
+
+                return (
+                  <SwiperSlide key={property.id} className="h-auto">
+                    <Card
+                      className={`property-card ${isPropertyTrulyFeatured ? 'truly-featured-property-card' : ''}`}
+                      onClick={() => handlePropertyClick(property.id)}
+                    >
+                      <div className="position-relative">
+                        {isPropertyTrulyFeatured && (
+                          <div className="top-featured-badge">
+                            <i class="bi bi-bookmark-check-fill"></i>
+                          </div>
                         )}
-                        {property.type && (
-                          <Badge bg={getPropertyTypeColor(property.type)} className="rounded-pill px-2 py-1 text-white">
-                            {getCategoryArabic(property.type)}
-                          </Badge>
+
+                        <Card.Img
+                          variant="top"
+                          src={
+                            (
+                              property.images &&
+                              Array.isArray(property.images) &&
+                              property.images.length > 0 &&
+                              property.images[0] &&
+                              typeof property.images[0].url === 'string' &&
+                              (property.images[0].url.startsWith('http://') || property.images[0].url.startsWith('https://'))
+                            )
+                              ? property.images[0].url
+                              : 'https://via.placeholder.com/400x250?text=NoImageAvailable'
+                          }
+                          alt={property.title || 'صورة عقار'}
+                          className="property-image"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error(`BestChoices: Error loading image for property ID ${property.id}. Attempted src: ${e.target.src}`, e);
+                            e.target.onerror = null;
+                            e.target.src = 'https://via.placeholder.com/400x250?text=ImageLoadError';
+                          }}
+                          style={{ height: '200px', objectFit: 'cover' }}
+                        />
+
+                        <div className="property-tags position-absolute top-0 end-0 p-2 d-flex flex-column gap-1">
+                          {property.purpose && (
+                            <Badge bg={getDealTypeColor(property.purpose)} className="rounded-pill px-2 py-1 text-white">
+                              {getTypeArabic(property.purpose)}
+                            </Badge>
+                          )}
+                          {property.type && ( // تأكد أن property.type يُرجع قيمة مثل 'house', 'commercial'
+                            <Badge bg={getPropertyTypeColor(property.type)} className="rounded-pill px-2 py-1 text-white">
+                              {getCategoryArabic(property.type)}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {isAuthenticated && (
+                          <Button
+                            variant="light"
+                            className="fav-button position-absolute top-0 start-0 m-2 rounded-circle p-1 d-flex align-items-center justify-content-center"
+                            style={{ width: '35px', height: '35px' }}
+                            onClick={(e) => handleToggleFavorite(e, property.id)}
+                            disabled={savingStates[property.id]}
+                            aria-label={savedProperties.has(property.id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
+                          >
+                            {savingStates[property.id] ? (
+                              <Spinner animation="border" size="sm" />
+                            ) : savedProperties.has(property.id) ? (
+                              <FaHeart className="text-danger" />
+                            ) : (
+                              <FaRegHeart className="text-secondary" />
+                            )}
+                          </Button>
                         )}
                       </div>
-                       {isAuthenticated && (
-                         <Button
-                           variant="light"
-                           className="fav-button position-absolute top-0 start-0 m-2 rounded-circle p-1 d-flex align-items-center justify-content-center"
-                           style={{ width: '35px', height: '35px'}}
-                           onClick={(e) => handleToggleFavorite(e, property.id)}
-                           disabled={savingStates[property.id]}
-                           aria-label={savedProperties.has(property.id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
-                         >
-                           {savingStates[property.id] ? (
-                             <Spinner animation="border" size="sm" />
-                           ) : savedProperties.has(property.id) ? (
-                             <FaHeart className="text-danger" />
-                           ) : (
-                             <FaRegHeart className="text-secondary" />
-                           )}
-                         </Button>
-                       )}
-                    </div>
 
-                    <Card.Body>
-                    <div className="fw-bold fs-5 mb-1" style={{ color: '#d6762e' }}>
-          {formatPrice(property.price)}
-          {property.purpose === 'rent' && <span className="rent-period text-muted small"> / شهري</span>}
-        </div>
-                      <h5 className="card-title"> {/* Title color/overflow from CSS */}
-                         {property.title || 'عنوان غير متوفر'}
-                      </h5>
-                      <p className="card-text small text-muted mt-auto"> {/* Location color/overflow from CSS */}
-                        <i className="bi bi-geo-alt-fill me-1 IAD"></i> {/* Check if 'bi' icons are loaded */}
-                        {property.address || 'العنوان غير محدد'}
-                      </p>
-                    </Card.Body>
-                  </Card>
-                </SwiperSlide>
-              ))}
+                      <Card.Body>
+                        {/* ---!!! إضافة شارة "وكيل معتمد" هنا !!!--- */}
+
+                        {/* ---!!! نهاية شارة "وكيل معتمد" !!!--- */}
+                        <div className="fw-bold fs-5 mb-1" style={{ color: '#d6762e' }}>
+                          {formatPrice(property.price)}
+                          {property.purpose === 'rent' && <span className="rent-period text-muted small"> / شهري</span>}
+                        </div>
+
+                        <h5 className="card-title">
+                          {property.title || 'عنوان غير متوفر'}
+                        </h5>
+
+                        <p className="card-text small text-muted mt-auto">
+                          <i className="bi bi-geo-alt-fill me-1 IAD"></i>
+                          {property.address || 'العنوان غير محدد'}                                  {isFromVerifiedAgent && (
+                            <Badge className="verified-agent-info-badge mb-2" > {/* تمت إزالة 'pill' و 'bg' */}
+                              <i className="bi bi-patch-check-fill"></i> {/* الأيقونة، يمكن إزالتها إذا لم تعد مرغوبة */}
+                              <span>وكيل معتمد</span> {/* وضع النص في span للتحكم الأفضل إذا لزم الأمر */}
+                            </Badge>
+                          )}
+                        </p>
+                      </Card.Body>
+                      <div className="d-flex justify-content-around text-muted py-2 border-top det-icn">
+                        {property.type === 'commercial' ? (
+                          property.area > 0 && (
+                            <div className="d-flex align-items-center gap-1">
+                              <i className="bi bi-aspect-ratio"></i>
+                              <span>{property.area} م²</span>
+                            </div>
+                          )
+                        ) : (
+                          <>
+                            {property.area > 0 && (
+                              <div className="d-flex align-items-center gap-1">
+                                <i className="bi bi-aspect-ratio"></i>
+                                <span>{property.area} م²</span>
+                              </div>
+                            )}
+                            {property.bedrooms > 0 && (
+                              <div className="d-flex align-items-center gap-1">
+                                <i className="bi bi-door-closed-fill"></i>
+                                <span>{property.bedrooms}</span>
+                              </div>
+                            )}
+                            {property.bathrooms > 0 && (
+                              <div className="d-flex align-items-center gap-1">
+                                <i className="bi bi-droplet-half"></i>
+                                <span>{property.bathrooms}</span>
+                              </div>
+                            )}
+                            {(property.livingRooms > 0 || property.livingrooms > 0) && (
+                              <div className="d-flex align-items-center gap-1">
+                                <i className="bi bi-display"></i>
+                                <span>{property.livingRooms || property.livingrooms}</span>
+                              </div>
+                            )}
+                            {property.balconies > 0 && (
+                              <div className="d-flex align-items-center gap-1">
+                                <i className="bi bi-border-width"></i>
+                                <span>{property.balconies}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </Card>
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </>
         )}

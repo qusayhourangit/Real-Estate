@@ -12,6 +12,9 @@ import PropertyListingsPage from './pages/PropertyListingsPage';
 import PropertyDetailsPage from './pages/PropertyDetailsPage';
 import SavedPropertiesPage from './pages/SavedPropertiesPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AgentSubscriptionPage from './pages/AgentSubscriptionPage';
+import AgentProfilePage from './pages/AgentProfilePage'; //  <--- أضف هذا
+
 
 // مكونات المصادقة
 import Login from './components/Auth/Login';
@@ -29,6 +32,7 @@ import SavedProperties from './components/Dashboard/User/SavedProperties';
 // صفحات لوحة تحكم المدير
 import AdminDashboardLayout from './components/Dashboard/Admin/AdminDashboardLayout';
 import PendingProperties from './components/Dashboard/Admin/PendingProperties';
+import SubscriptionRequests from './components/Dashboard/Admin/SubscriptionRequests'; 
 import ManageUsers from './components/Dashboard/Admin/ManageUsers';
 import SiteStats from './components/Dashboard/Admin/SiteStats';
 import ContactUs from './pages/ContactUs';
@@ -40,7 +44,7 @@ function App() {
 
 
   return (
-   <>
+    <>
       <NavBar />
 
       <Routes>
@@ -52,7 +56,14 @@ function App() {
         <Route path="/savedproperties" element={<SavedPropertiesPage />} />
         <Route path="/Contactus" element={<ContactUs />} />
         <Route path="/Aboutus" element={<AboutUs />} />
-        <Route path="/BestChoices" element={<BestChoices/>}/>
+        <Route path="/BestChoices" element={<BestChoices />} />
+        <Route
+          path="/premium"
+          element={
+              <AgentSubscriptionPage />
+          }
+        />
+         <Route path="/agent/:agentId" element={<AgentProfilePage />} /> 
 
 
         <Route
@@ -63,15 +74,15 @@ function App() {
           <ProtectedRoute allowedRoles={['user', 'admin']}> {/* فقط المستخدم المسجل يمكنه الإضافة */}
             <AddPropertyForm />
           </ProtectedRoute>
-          
+
         } />
-           <Route path="/addproperty/:propertyId" element={
+        <Route path="/addproperty/:propertyId" element={
           <ProtectedRoute allowedRoles={['user', 'admin']}> {/* فقط المستخدم المسجل يمكنه الإضافة */}
             <AddPropertyForm />
           </ProtectedRoute>
-          
+
         } />
-        
+
         {/* مسارات المستخدم */}
         <Route
           path="/dashboard"
@@ -98,6 +109,7 @@ function App() {
         >
           <Route index element={<Navigate to="pending" replace />} />
           <Route path="pending" element={<PendingProperties />} />
+           <Route path="subscription-requests" element={<SubscriptionRequests />} /> 
           <Route path="users" element={<ManageUsers />} />
           <Route path="stats" element={<SiteStats />} />
         </Route>
@@ -106,7 +118,7 @@ function App() {
         {/* مسار الصفحة غير موجودة */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      </>
+    </>
   );
 }
 

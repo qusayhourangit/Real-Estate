@@ -25,6 +25,8 @@
       text-align: center;
       font-size: 1.1rem; /* حجم الأيقونة */
       margin-left: 8px; /* مسافة بعد الأيقونة (للعربية) */
+      margin: 5px;
+    color: #d6762e !important;
   }
   
   

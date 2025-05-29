@@ -238,10 +238,10 @@ const SavedPropertiesPage = () => {
                                                             Array.isArray(property.images) &&
                                                             property.images.length > 0 &&
                                                             property.images[0] && // تأكد أن الكائن الأول موجود
-                                                            typeof property.images[0].filename === 'string' && // تأكد أن filename هو سلسلة نصية
-                                                            (property.images[0].filename.startsWith('http://') || property.images[0].filename.startsWith('https://')) // تأكد أنه رابط
+                                                            typeof property.images[0].url === 'string' && // تأكد أن filename هو سلسلة نصية
+                                                            (property.images[0].url.startsWith('http://') || property.images[0].url.startsWith('https://')) // تأكد أنه رابط
                                                         )
-                                                            ? property.images[0].filename // <--- استخدم الرابط الكامل مباشرة من 'filename'
+                                                            ? property.images[0].url // <--- استخدم الرابط الكامل مباشرة من 'filename'
                                                             : 'https://via.placeholder.com/400x250?text=NoSavedItemImg' // صورة افتراضية مميزة (غيرت النص قليلاً)
                                                     }
                                                     alt={property.title || 'صورة عقار'}

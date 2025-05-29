@@ -1,0 +1,412 @@
+/* ===================================== */
+/*      AgentSubscriptionPage.css      */
+/* ===================================== */
+
+/* --- تنسيقات عامة للصفحة والعناوين --- */
+.agent-subscription-page .page-title {
+    color: var(--text-dark, #2c3e50);
+    margin-bottom: 0.5rem;
+}
+.agent-subscription-page .page-subtitle {
+    font-size: 1.15rem; /* تعديل بسيط */
+    color: #5a6778; /* لون أغمق قليلاً */
+    max-width: 700px; /* تحديد عرض أقصى للوصف الرئيسي */
+    margin-left: auto;
+    margin-right: auto;
+}
+/* تنسيقات أزرار الفترة البديلة */
+.period-buttons-container {
+  background-color: #fff;
+  border-radius: 50px;
+  padding: 0.35rem;
+  display: inline-flex;
+  margin: 0 auto 0.8rem;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.period-button {
+  font-weight: 500;
+  border-radius: 30px;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  transition: all 0.25s ease;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.period-button.active {
+  background-color: #e38e49 !important;
+  color: white !important;
+  box-shadow: 0 3px 8px rgba(227, 142, 73, 0.35);
+  font-weight: 600;
+}
+.agent-subscription-page i {
+    color: #e38e49;
+}
+.d-grid i {
+    color: #fff !important;
+}
+
+.period-button:not(.active):hover {
+  background-color: rgba(227, 142, 73, 0.1);
+  color: #d6762e;
+}
+.agent-subscription-page .section-heading {
+    color: var(--text-dark, #2c3e50);
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 12px;
+    margin-bottom: 2.5rem !important; /* زيادة الهامش السفلي */
+}
+.agent-subscription-page .section-heading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background-color: var(--main-color, #e38e49);
+    border-radius: 2px;
+}
+/* AgentSubscriptionPage.css */
+
+/* ... (تنسيقاتك الحالية) ... */
+
+/* تنسيق أزرار اختيار الفترة داخل الكارد */
+.period-buttons-in-card {
+  /* يمكن إضافة margin إضافي إذا لزم الأمر */
+}
+
+.period-buttons-in-card .btn-group {
+  width: 100%; /* لجعل مجموعة الأزرار تأخذ العرض الكامل */
+  display: flex; /* استخدام flex لضمان توزيع متساوٍ إذا كان عدد الأزرار مختلفًا */
+}
+
+.period-buttons-in-card .period-toggle-btn {
+  flex-grow: 1; /* لجعل كل زر يأخذ مساحة متساوية */
+  font-size: 0.8rem; /* حجم خط أصغر للأزرار */
+  padding: 0.3rem 0.5rem; /* padding أصغر */
+  border-radius: 0.2rem !important; /* حواف أقل دائرية إذا أردت */
+  margin: 0 2px; /* مسافة صغيرة بين الأزرار */
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border-width: 1px; /* تأكيد سماكة الحدود */
+}
+
+/* تخصيص زر الفترة النشط */
+.period-buttons-in-card .period-toggle-btn.btn-primary {
+  background-color: #e38e49 !important;
+  border-color: #e38e49  !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* تخصيص زر الفترة غير النشط */
+.period-buttons-in-card .period-toggle-btn.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #ced4da;
+  background-color: #fff;
+}
+.period-buttons-in-card .period-toggle-btn.btn-outline-secondary:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+/* إزالة الحدود الدائرية الافتراضية من ButtonGroup إذا لزم الأمر */
+.period-buttons-in-card .btn-group > .btn:not(:first-child) {
+  border-top-left-radius: 0.2rem !important;
+  border-bottom-left-radius: 0.2rem !important;
+}
+.period-buttons-in-card .btn-group > .btn:not(:last-child) {
+  border-top-right-radius: 0.2rem !important;
+  border-bottom-right-radius: 0.2rem !important;
+}
+
+
+/* تعديل بسيط على حقل عرض الخطة المختارة في الفورم */
+#selectedPlanDisplay .form-control[disabled] {
+    background-color: #e9ecef; /* لون خلفية أوضح للعنصر المعطل */
+    cursor: default;
+}
+/* --- تنسيق تبويبات اختيار فترة الاشتراك --- */
+.period-pills-selector {
+    background-color: #ffffff; /* خلفية بيضاء واضحة للحاوية */
+    border-radius: 50px;
+    padding: 0.35rem;
+    display: inline-flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.8rem !important;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); /* إضافة ظل خفيف للحاوية */
+}
+
+.period-pills-selector .nav-item {
+    flex-grow: 1;
+}
+
+/* استهداف الروابط داخل التبويبات بشكل أكثر تحديدًا */
+.period-pills-selector .nav-link.period-pill {
+    color: #555e68; /* <<<<<< لون نص داكن للروابط غير النشطة */
+    font-weight: 500;
+    border-radius: 30px !important;
+    padding: 0.6rem 1.5rem; /* تعديل بسيط للحشو */
+    text-align: center;
+    border: none; /* إزالة أي حدود للرابط نفسه */
+    background-color: transparent; /* <<<<<< تأكيد أن الخلفية شفافة بشكل افتراضي */
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.2s ease;
+    font-size: 0.9rem;
+    cursor: pointer; /* تغيير شكل المؤشر */
+}
+
+/* حالة المرور على الرابط غير النشط */
+.period-pills-selector .nav-link.period-pill:not(.active):hover {
+    background-color: rgba(227, 142, 73, 0.1); /* لون خلفية خفيف عند المرور */
+    color: var(--hover-color, #d6762e); /* لون النص عند المرور */
+}
+
+/* حالة الرابط النشط */
+.period-pills-selector .nav-link.period-pill.active {
+    background-color: var(--main-color, #e38e49) !important; /* لون الهوية */
+    color: white !important; /* نص أبيض للرابط النشط */
+    box-shadow: 0 3px 8px rgba(227, 142, 73, 0.35);
+}
+/* --- تنسيق كروت الأسعار --- */
+.pricing-card {
+    border-radius: 16px !important; /* تعديل الحواف */
+    border: 1px solid #e9ecef !important;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+.pricing-card:hover {
+    transform: translateY(-7px) scale(1.015); /* تأثير رفع وتكبير طفيف */
+    box-shadow: 0 14px 30px rgba(0,0,0,0.1) !important;
+}
+.pricing-card.selected.active-plan {
+    border-color: var(--main-color, #e38e49) !important;
+    box-shadow: 0 7px 22px rgba(227, 142, 73, 0.28) !important;
+    transform: translateY(-3px) scale(1.005);
+}
+.recommended-badge, .selected-plan-badge {
+    position: absolute;
+    font-size: 0.7rem; /* تصغير الخط قليلاً */
+    font-weight: bold;
+    padding: 0.3rem 0.7rem; /* تعديل الحشو */
+    border-radius: 12px; /* تعديل الحواف */
+    z-index: 2;
+    text-transform: uppercase; /* جعل النص بأحرف كبيرة (اختياري) */
+}
+.recommended-badge {
+    top: 12px;
+    right: 12px;
+    background-color: #ffc107;
+    color: #212529; /* لون نص أغمق ليتناسب مع الأصفر */
+}
+.selected-plan-badge {
+    top: 12px;
+    left: 12px;
+    background-color: var(--main-color, #e38e49);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.selected-plan-badge .bi-check-lg {
+    font-size: 0.8rem; /* تصغير أيقونة الصح */
+}
+.pricing-card .card-header {
+    border-bottom: 1px solid #f1f3f5; /* إضافة حد خفيف */
+    padding-top: 1.25rem;
+    padding-bottom: 1rem; /* تعديل الحشو */
+}
+.pricing-card .card-header .bi {
+    color: var(--main-color, #e38e49);
+}
+.pricing-card.selected.active-plan .card-header .bi,
+.pricing-card.selected.active-plan .card-header {
+    color: var(--main-color, #e38e49) !important;
+}
+.plan-icon {
+    /* اللون تم تحديده في الهيدر */
+    margin-bottom: 0.6rem !important;
+}
+.plan-name {
+    color: var(--text-dark, #2c3e50);
+    font-size: 1.2rem; /* تعديل حجم اسم الخطة */
+    letter-spacing: 0.5px; /* تباعد بسيط للحروف */
+}
+.pricing-amount-wrapper {
+    margin-bottom: 1rem !important; /* زيادة الهامش السفلي للسعر */
+}
+.pricing-amount {
+    font-size: 2.2rem; /* تعديل حجم السعر */
+    font-weight: 700;
+    color: var(--text-dark, #333);
+}
+.period-suffix {
+    font-size: 0.8rem; /* تصغير لاحقة الفترة */
+    font-weight: 500;
+    color: #6c757d;
+}
+.features-list {
+    text-align: right;
+    padding-right: 0.5rem;
+}
+.features-list li {
+    font-size: 0.9rem;
+    color: #495057;
+    padding: 0.3rem 0; /* إضافة حشو عمودي للميزات */
+}
+.features-list li .bi-check-circle {
+    vertical-align: middle; /* محاذاة أفضل */
+    font-size: 1.05rem; /* تعديل حجم أيقونة الصح */
+    margin-left: 6px; /* تعديل المسافة */
+}
+.select-plan-btn-new {
+    font-weight: 600;
+    padding: 0.7rem 1.4rem !important;
+    border-radius: 30px !important;
+    font-size: 0.9rem; /* تعديل حجم الخط */
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    text-transform: uppercase; /* (اختياري) */
+}
+.select-plan-btn-new.btn-primary {
+    background-color: var(--main-color, #e38e49) !important;
+    border-color: var(--main-color, #e38e49) !important;
+}
+.select-plan-btn-new.btn-primary:hover {
+    background-color: var(--hover-color, #d6762e) !important;
+    border-color: var(--hover-color, #d6762e) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+.select-plan-btn-new.btn-outline-primary {
+    color: var(--main-color, #e38e49) !important;
+    border-color: var(--main-color, #e38e49) !important;
+    border-width: 1.5px; /* جعل الحدود أسمك قليلاً للـ outline */
+}
+.select-plan-btn-new.btn-outline-primary:hover {
+    background-color: var(--main-color, #e38e49) !important;
+    color: white !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+
+/* --- تنسيق نموذج الاشتراك مع أيقونات (لـ RTL: الأيقونة على اليمين) --- */
+.form-card-with-icons .card-body {
+    padding: 1.75rem; /* تعديل الحشو الداخلي */
+}
+.form-card-with-icons .form-label {
+    font-weight: 500;
+    color: #343a40;
+    margin-bottom: 0.4rem;
+    font-size: 0.88rem; /* تعديل حجم الخط */
+}
+.form-card-with-icons .input-group {
+    direction: rtl;
+}
+.form-card-with-icons .input-group-text.form-icon-bg {
+    background-color: #f8f9fa; /* أفتح قليلاً */
+    border: 1px solid #dee2e6;
+    border-left: none;
+    border-radius: 0 0.25rem 0.25rem 0; /* استخدام rem للحواف */
+    padding: 0.45rem 0.8rem; /* تعديل الحشو */
+    display: flex;
+    align-items: center;
+}
+.form-card-with-icons .form-icon {
+    color: var(--main-color, #e38e49); /* استخدام متغير اللون */
+    font-size: 1.1rem;
+    line-height: 1;
+}
+.form-card-with-icons .form-control {
+    border-right: none;
+    border-radius: 0.25rem 0 0 0.25rem; /* استخدام rem للحواف */
+    padding: 0.45rem 0.8rem; /* تعديل الحشو */
+    font-size: 0.9rem; /* تعديل حجم الخط */
+    min-height: calc(1.5em + 0.9rem + 2px); /* ليتناسب مع الـ padding الجديد */
+}
+.form-card-with-icons .form-control:focus {
+    border-color: var(--main-color, #e38e49);
+    box-shadow: 0 0 0 0.2rem rgba(227, 142, 73, 0.2); /* تخفيف الظل قليلاً */
+    border-right: none !important; /* التأكيد على إزالة الحد */
+    z-index: 2; /* لضمان ظهور الحقل فوق حدود الأيقونة عند التركيز */
+}
+.form-card-with-icons .input-group:focus-within .input-group-text.form-icon-bg {
+    border-color: var(--main-color, #e38e49);
+    border-right-width: 1px;
+    z-index: 1; /* لضمان أن حدود الأيقونة لا تتداخل مع الحقل */
+}
+.form-card-with-icons .input-group textarea.form-control {
+    min-height: auto; /* السماح لـ rows بتحديد الارتفاع */
+    /* padding-top و padding-bottom يتم التحكم بهما من .form-control العام */
+}
+.form-card-with-icons .input-group .input-group-text.align-items-start.form-icon-bg {
+    padding-top: 0.65rem; /* تعديل بسيط */
+}
+.form-card-with-icons .form-text-offset-icon {
+     display: block !important;
+     margin-top: 0.25rem !important;
+     margin-right: calc(0.8rem + 1.1rem + 0.8rem + 4px); /* اضبط حسب الحاجة بناءً على الـ padding الجديد */
+     font-size: 0.85rem; /* تصغير خط السعر قليلاً */
+}
+
+/* --- قسم طرق الدفع الوهمية --- */
+.payment-methods-section {
+    border-top: 1px solid #f1f3f5;
+    border-bottom: 1px solid #f1f3f5;
+    padding-top: 1.25rem; /* تعديل الحشو */
+    padding-bottom: 1rem;
+    margin-top: 2rem !important; /* زيادة الهامش العلوي */
+    margin-bottom: 2rem !important; /* زيادة الهامش السفلي */
+}
+.payment-option .payment-icon {
+    width: 50px; /* تصغير الأيقونات قليلاً */
+    height: auto;
+    margin-bottom: 0.3rem; /* تقليل الهامش */
+    object-fit: contain;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #e9ecef; /* حدود أفتح */
+}
+.payment-option .payment-icon-bs {
+    font-size: 2.2rem; /* تصغير أيقونة bootstrap */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+}
+.payment-methods-section .text-muted.small {
+    font-size: 0.8rem; /* تصغير خط الوصف */
+}
+
+/* --- زر الإرسال --- */
+.submit-agent-request-btn {
+    background-color: var(--main-color, #e38e49);
+    border-color: var(--main-color, #e38e49);
+    font-weight: 600;
+    padding: 0.8rem 1.5rem; /* تعديل الحشو */
+    font-size: 0.95rem; /* تعديل حجم الخط */
+    border-radius: 30px; /* حواف أكثر دائرية */
+    transition: all 0.25s ease; /* تعديل الانتقال */
+}
+.submit-agent-request-btn:hover {
+    background-color: var(--hover-color, #d6762e);
+    border-color: var(--hover-color, #d6762e);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+}
+.submit-agent-request-btn .spinner-border {
+    width: 1rem; /* تعديل حجم Spinner */
+    height: 1rem;
+}

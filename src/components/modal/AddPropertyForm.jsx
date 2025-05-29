@@ -5,7 +5,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import L from 'leaflet';
-import axios from 'axios';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import 'leaflet/dist/leaflet.css';
@@ -13,7 +12,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./AddPropertyModal.css";
 import api from '../../API/api';
 import { useSelector } from 'react-redux';
-import { Spinner, Alert } from 'react-bootstrap';
+import { Spinner, Alert, Form, Toast, ToastContainer } from 'react-bootstrap';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -22,23 +21,79 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const schema = z.object({
-  title: z.string().min(5, 'الرجاء إدخال عنوان واضح للعقار (5 أحرف على الأقل)'),
-  description: z.string().optional(),
-  type: z.enum(['house', 'commercial'], { required_error: 'الرجاء تحديد نوع العقار' }),
-  purpose: z.enum(['sale', 'rent'], { required_error: 'الرجاء تحديد الغرض من العقار' }),
-  price: z.string()
-    .min(1, 'الرجاء إدخال السعر')
-    .refine(val => /^[,\d]+$/.test(val), { message: 'السعر يجب أن يحتوي على أرقام وفواصل فقط' })
-    .refine(val => parseInt(val.replace(/,/g, ''), 10) > 0, { message: 'السعر يجب أن يكون أكبر من صفر' }),
-  area: z.string()
-    .min(1, 'الرجاء إدخال المساحة')
-    .regex(/^\d+$/, 'المساحة يجب أن تكون رقماً صحيحاً')
-    .refine(val => parseInt(val, 10) > 0, { message: 'المساحة يجب أن تكون أكبر من صفر' }),
-  phone: z.string().min(9, 'الرجاء إدخال رقم هاتف صحيح').regex(/^09\d{8}$/, 'صيغة الرقم غير صحيحة (يجب أن يبدأ بـ 09 ويتكون من 10 أرقام)'),
-  address: z.string().min(3, "الرجاء إدخال عنوان صحيح ودقيق"),
-});
+const MAX_PRICE = 100000000000; // مثال: 100 مليار
+const MAX_AREA = 10000;      // مثال: 10,000 متر مربع
+const formatPriceSimple = (value) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+// --- نهاية قسم الحدود القصوى ---
 
+const schema = z.object({
+  // title: مطابق لـ required|string|max:255 (الشرط الأدنى 5 لديك هو أكثر تحديداً)
+  title: z.string()
+    .min(5, 'الرجاء إدخال عنوان واضح للعقار (5 أحرف على الأقل)')
+    .max(255, 'العنوان طويل جداً (الحد الأقصى 255 حرف)'),
+
+  // description: مطابق لـ string. الخلفية تتطلبه (required)، هنا اختياري (optional)
+  description: z.string()
+    .optional(), // أبقيته اختياريًا كما كان، أزل .optional() إذا أردته إلزاميًا
+
+  // price: مطابق لـ required|numeric|min:0 مع إضافة التحقق من الحد الأقصى
+  price: z.string()
+    .min(1, 'الرجاء إدخال السعر') // يضمن أنه ليس فارغاً (required)
+    .refine(val => /^[,\d]+$/.test(val), { message: 'السعر يجب أن يحتوي على أرقام وفواصل فقط' }) // يضمن شكل رقمي
+    .refine(val => {
+      const num = parseInt(val.replace(/,/g, ''), 10);
+      // التحقق من min:0 (أو > 0 كما كان لديك وهو مقبول)
+      return !isNaN(num) && num >= 0; // تم التغيير إلى >= 0 ليطابق min:0
+    }, { message: 'السعر يجب أن يكون صفراً أو أكبر' })
+    .refine(val => {
+      try {
+        const num = BigInt(val.replace(/,/g, ''));
+        // التحقق من الحد الأقصى لمنع خطأ SQL
+        return num <= BigInt(MAX_PRICE);
+      } catch (e) { return false; }
+    }, { message: `السعر المدخل كبير جداً. الحد الأقصى المسموح به هو ${formatPriceSimple(MAX_PRICE)} ل.س` }),
+
+  // area: مطابق لـ required|numeric|min:0 مع إضافة التحقق من الحد الأقصى
+  area: z.string()
+    .min(1, 'الرجاء إدخال المساحة') // يضمن أنه ليس فارغاً (required)
+    .regex(/^\d+$/, 'المساحة يجب أن تكون رقماً صحيحاً موجباً') // يضمن رقم صحيح (numeric وموجب)
+    .refine(val => {
+       const num = parseInt(val, 10);
+       // التحقق من min:0 (أو > 0 كما كان لديك)
+       return !isNaN(num) && num >= 0; // تم التغيير إلى >= 0 ليطابق min:0
+    }, { message: 'المساحة يجب أن تكون صفراً أو أكبر' })
+    .refine(val => {
+      const num = parseInt(val, 10);
+      // التحقق من الحد الأقصى لمنع خطأ SQL
+      return !isNaN(num) && num <= MAX_AREA;
+    }, { message: `المساحة المدخلة كبيرة جداً. الحد الأقصى المسموح به هو ${MAX_AREA} م²` }),
+
+  // type: مطابق لـ required | Rule::in (يجب تحديث القائمة لتطابق الخلفية)
+  type: z.enum(['house', 'apartment', 'land', 'commercial'], { // <-- تم تحديث القائمة
+     required_error: 'الرجاء تحديد نوع العقار'
+     // يمكنك إضافة invalid_type_error إذا أردت رسالة مخصصة للقيم غير الصالحة
+     // invalid_type_error: "قيمة نوع العقار غير صالحة"
+  }),
+
+  // purpose: مطابق لـ required | Rule::in (القائمة متطابقة)
+  purpose: z.enum(['sale', 'rent'], {
+     required_error: 'الرجاء تحديد الغرض من العقار'
+     // invalid_type_error: "قيمة الغرض من العقار غير صالحة"
+  }),
+
+  // phone: مطابق لـ required|string، والتحقق الأمامي أكثر تحديداً (وهو أفضل)
+  phone: z.string()
+    .min(1, 'الرجاء إدخال رقم الهاتف') // يضمن required
+    .max(20, 'رقم الهاتف طويل جداً') // يطابق max:20 في الخلفية
+    .regex(/^09\d{8}$/, 'صيغة الرقم غير صحيحة (يجب أن يبدأ بـ 09 ويتكون من 10 أرقام)'), // تحقق الصيغة المفصل
+
+  // address: مطابق لـ required|string (الشرط الأدنى 3 لديك مقبول)
+  address: z.string()
+    .min(3, "الرجاء إدخال عنوان صحيح ودقيق (3 أحرف على الأقل)")
+    .max(255, 'العنوان طويل جداً (الحد الأقصى 255 حرف)'), // إضافة حد أقصى للعناوين الطويلة جداً (اختياري لكن جيد)
+
+  // الحقول الأخرى (location_lat, location_lon, counters, images) تُدار خارج هذا المخطط
+});
 const formContainerVariants = { hidden: { opacity: 0, y: -20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut", staggerChildren: 0.08 } } };
 const sectionVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
 const countersSectionVariants = { hidden: { opacity: 0, height: 0, y: -10, marginBottom: 0 }, visible: { opacity: 1, height: 'auto', y: 0, marginBottom: '1rem', transition: { duration: 0.3, ease: "easeOut" } }, exit: { opacity: 0, height: 0, y: -10, marginBottom: 0, transition: { duration: 0.2, ease: "easeIn" } } };
@@ -55,6 +110,7 @@ export default function PropertyForm({ onSubmissionSuccess }) {
 
   const propertyToEditFromState = location.state?.propertyToEdit;
   const isEditMode = !!propertyId;
+  const isCurrentUserSubscribed = user && (user.is_verified_agent === 1 || user.is_verified_agent === true);
 
   const [position, setPosition] = useState([33.5138, 36.2765]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,6 +122,7 @@ export default function PropertyForm({ onSubmissionSuccess }) {
   const [livingRooms, setLivingRooms] = useState(1);
   const [balconies, setBalconies] = useState(0);
   const [files, setFiles] = useState([]);
+    const [makeFeatured, setMakeFeatured] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(isEditMode);
   const mapRef = useRef();
@@ -81,74 +138,7 @@ export default function PropertyForm({ onSubmissionSuccess }) {
   });
   const propertyType = watch('type');
 
-const uploadImageToCloudinary = async (file) => {
-  const cloudName = 'dyrxrlb8f';
-  const uploadPreset = 'real_estate_preset';
-  const MAX_IMAGE_SIZE_MB = 10; // الحد الأقصى لحجم الصورة بالميغابايت
-  const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024; // تحويل الميغابايت إلى بايت
-  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-    // يمكنك طباعة نوع الملف للمساعدة في التشخيص
-    console.error(`Unsupported file type: ${file.name} (type: ${file.type})`);
-    throw new Error("الصور المرفوعة غير مدعومة، يجب أن تكون من النوع JPEG أو PNG أو JPG.");
-  }
-    if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    console.error(`File too large: ${file.name} (size: ${file.size} bytes, max: ${MAX_IMAGE_SIZE_BYTES} bytes)`);
-    // يمكنك عرض حجم الملف الحالي للمستخدم لمساعدته
-    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2); // حجم الملف الحالي بالميغا
-    throw new Error(`حجم الصورة كبير جداً (${fileSizeMB} ميغابايت). يجب ألا يتجاوز حجم الصورة ${MAX_IMAGE_SIZE_MB} ميغابايت.`);
-  }
 
-  const imageFormData = new FormData(); // <--- من الأفضل استخدام اسم متغير مختلف هنا لتجنب الالتباس مع formData الخارجية
-  imageFormData.append('file', file);
-  imageFormData.append('upload_preset', uploadPreset);
-
-  try {
-    const response = await axios.post( // <--- استخدام axios.post
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      imageFormData, // <--- جسم الطلب (FormData)
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data', // axios قد يضبط هذا تلقائيًا لـ FormData، لكن لا ضرر من تحديده
-        }
-        
-      }
-    );
-
-    // بيانات الاستجابة من Cloudinary تكون في response.data عند استخدام axios
-    const responseData = response.data; 
-    // console.log("Cloudinary API Response Data:", responseData); // <--- جيد للتشخيص
-
-    // السطر الخاطئ الذي أضفته سابقًا، يجب إزالته أو تعديله
-    // console.log(uploadedImageURL.url); // <--- هذا السطر خاطئ، uploadedImageURL غير معرف هنا
-
-    if (responseData && responseData.secure_url) {
-      console.log("Cloudinary Upload Success. Secure URL:", responseData.secure_url);
-      return responseData.secure_url; // <--- نعيد الرابط الكامل فقط
-    } else {
-      console.error("Cloudinary Upload Failed. Full Response Data:", responseData);
-      // حاول استخدام رسالة الخطأ من Cloudinary إذا كانت متوفرة
-      const errorMessage = responseData?.error?.message || "فشل رفع الصورة إلى Cloudinary، لم يتم إرجاع secure_url.";
-      throw new Error(errorMessage);
-    }
-  } catch (error) {
-    console.error("Error during Cloudinary upload (axios request failed):", error);
-    // إذا كان الخطأ من axios (مثل خطأ شبكة أو خطأ HTTP من Cloudinary قبل الوصول لـ responseData.error)
-    if (error.response) {
-      // الخادم استجاب بحالة خطأ (4xx, 5xx)
-      console.error("Cloudinary Error Response Status:", error.response.status);
-      console.error("Cloudinary Error Response Data:", error.response.data);
-      throw new Error(error.response.data?.error?.message || `فشل الرفع إلى Cloudinary: ${error.response.status}`);
-    } else if (error.request) {
-      // تم إرسال الطلب ولكن لم يتم تلقي استجابة
-      console.error("Cloudinary No response received:", error.request);
-      throw new Error("فشل الرفع إلى Cloudinary: لا توجد استجابة من الخادم.");
-    } else {
-      // حدث خطأ ما أثناء إعداد الطلب
-      console.error("Cloudinary Request setup error:", error.message);
-      throw new Error(`فشل الرفع إلى Cloudinary: ${error.message}`);
-    }
-  }
-};
   const formatPriceForDisplay = useCallback((value) => {
     if (value === null || value === undefined || value === '') return '';
     const numberValue = String(value).replace(/[^\d]/g, '');
@@ -174,7 +164,13 @@ const uploadImageToCloudinary = async (file) => {
       phone: propertyData.phone || '',
       address: propertyData.address || '',
     });
-
+ // ---!!! تحديث حالة makeFeatured عند تعديل عقار !!!---
+    if (propertyData.hasOwnProperty('is_featured')) {
+        setMakeFeatured(propertyData.is_featured === 1 || propertyData.is_featured === true);
+    } else {
+        setMakeFeatured(false); // قيمة افتراضية إذا لم يكن الحقل موجوداً
+    }
+    // ---!!! نهاية التحديث !!!---  
     setBedrooms(parseInt(propertyData.bedrooms || '0', 10));
     setBathrooms(parseInt(propertyData.bathrooms || '0', 10));
     setLivingRooms(parseInt(propertyData.livingRooms || '0', 10));
@@ -246,6 +242,7 @@ const uploadImageToCloudinary = async (file) => {
         setPosition([33.5138, 36.2765]);
         setSearchQuery('');
         setFiles([]);
+        setMakeFeatured(false); // ---!!! إعادة تعيين مفتاح التمييز لوضع الإضافة !!!---
         setIsLoadingData(false);
         setFormError(null);
         setFormSuccess(null);
@@ -272,7 +269,6 @@ const uploadImageToCloudinary = async (file) => {
         const lon = parseFloat(firstResult.lon);
         setPosition([lat, lon]);
         setSearchResults([]); // ← إخفاء الـ list
-        setSearchQuery(firstResult.display_name); // ← نسخ الاسم للخانة إن أردت
       } else {
         setSearchResults([]);
       }
@@ -315,18 +311,7 @@ const uploadImageToCloudinary = async (file) => {
     // Validate position is set
     if (!position || position.length !== 2) { setFormError("الرجاء تحديد الموقع على الخريطة."); setIsSubmitting(false); return; }
    // تحميل الصور إلى Cloudinary
-  let imageUrls = []; // <--- مصفوفة لتخزين الروابط الكاملة
-try {
-  for (let i = 0; i < files.length; i++) {
-    const url = await uploadImageToCloudinary(files[i]); // <--- ستحصل على الرابط الكامل هنا
-    imageUrls.push(url);
-    await new Promise(r => setTimeout(r, 500)); // تأخير بسيط إذا لزم الأمر
-  }
-} catch (err) {
-  setFormError("حدث خطأ أثناء رفع الصور: " + err.message);
-  setIsSubmitting(false);
-  return;
-}
+
 
     const formData = new FormData();
     formData.append('title', data.title);
@@ -341,8 +326,16 @@ try {
     formData.append('address', data.address);
     formData.append('user_id', user.id); // Ensure user_id is included
     
-
-    // Append room details based on type
+  // ---!!! تحديد قيمة is_featured بناءً على اشتراك المستخدم وحالة المفتاح !!!---
+    let finalIsFeaturedValue = '0'; // القيمة الافتراضية (غير مميز)
+    if (isCurrentUserSubscribed && makeFeatured) {
+        finalIsFeaturedValue = '1'; // اجعله مميزاً فقط إذا كان المستخدم مشتركاً والمفتاح مُفعّل
+    }
+    formData.append('is_featured', finalIsFeaturedValue);
+    console.log('PropertyForm Debug: isCurrentUserSubscribed:', isCurrentUserSubscribed);
+    console.log('PropertyForm Debug: makeFeatured state:', makeFeatured);
+    console.log('PropertyForm Debug: Sending is_featured as:', finalIsFeaturedValue);
+    // ---!!! نهاية تحديد is_featured !!!---
     if (data.type === 'house') {
       formData.append('bedrooms', bedrooms); formData.append('bathrooms', bathrooms); formData.append('livingRooms', livingRooms); formData.append('balconies', balconies);
     } else {
@@ -350,9 +343,10 @@ try {
       formData.append('bedrooms', '0'); formData.append('bathrooms', '0'); formData.append('livingRooms', '0'); formData.append('balconies', '0');
     }
     // Append files if any are selected
-imageUrls.forEach((url) => {
-  formData.append('images[]', url); // <--- إرسال مصفوفة الروابط الكاملة إلى الـ API
+files.forEach((file) => {
+  formData.append('images[]', file); // ← مباشرة نرسل الملفات الأصلية
 });
+
     try {
       const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }; // Correct content type
       let response;
@@ -534,7 +528,23 @@ for (let pair of formData.entries()) {
               <input type="tel" id="phone" {...register('phone')} placeholder="09xxxxxxxx" className={`form-control ${errors.phone ? 'is-invalid' : ''}`} />
               {errors.phone && <span className="invalid-feedback d-block">{errors.phone.message}</span>}
             </div>
-
+  {/* ---!!! إضافة مفتاح التبديل هنا إذا كان المستخدم مشتركاً !!!--- */}
+            {isCurrentUserSubscribed && (
+                <motion.div className="form-group mt-3 mb-2" variants={sectionVariants}> {/* استخدام sectionVariants أو إنشاء variant خاص */}
+                    <Form.Check 
+                        type="switch"
+                        id="is-featured-property-switch"
+                        label="تمييز هذا العقار (سيظهر بشكل أفضل للزوار)"
+                        checked={makeFeatured}
+                        onChange={(e) => setMakeFeatured(e.target.checked)}
+                        className="custom-property-feature-switch" // كلاس لتطبيق تنسيقات خاصة إذا أردت
+                    />
+                    <small className="form-text text-muted d-block mt-1">
+                        عند تفعيل هذا الخيار، سيتم اعتبار عقارك مميزاً.
+                    </small>
+                </motion.div>
+            )}
+            {/* ---!!! نهاية مفتاح التبديل !!!--- */}
             <AnimatePresence mode='wait'>
               {propertyType === 'house' && (
                 <motion.div className="room-counters-section" variants={countersSectionVariants} initial="hidden" animate="visible" exit="exit">

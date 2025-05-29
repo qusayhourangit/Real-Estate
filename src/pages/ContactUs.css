@@ -102,7 +102,7 @@
   .contact-info-list li a:hover {
       color: var(--main-color, #e38e49); /* لون الهوية عند المرور */
   }
-  
+ 
   .contact-icon-main {
     color: var(--main-color, #e38e49); /* لون الأيقونة */
     font-size: 1.4rem; /* حجم الأيقونة */

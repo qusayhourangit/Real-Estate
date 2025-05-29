@@ -1,0 +1,264 @@
+/* src/components/PricingSectionHome.css */
+
+:root {
+  --primary-orange: #f58220; /* اللون البرتقالي الرئيسي من هويتك */
+  --primary-orange-darker: #d96f1c; /* درجة أغمق للـ hover */
+  --card-bg: #ffffff;
+  --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.07); /* ظل خفيف للبطاقات */
+  --text-primary-dark: #212529; /* لون النص الأساسي الداكن */
+  --text-secondary-grey: #6c757d; /* لون النص الثانوي الرمادي */
+  --icon-standard-grey: #6c757d; /* لون الأيقونات القياسية */
+  --success-green: #198754; /* Bootstrap success color */
+}
+
+.pricing-section-home {
+  background-color: rgb(252, 250, 247) !important;
+  padding-top: 60px;
+  padding-bottom: 60px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    margin-bottom: 3rem;
+}
+
+.section-header-home .section-title-home {
+  color: var(--text-primary-dark);
+  position: relative;
+  padding-bottom: 15px;
+  margin-bottom: 15px !important;
+  font-size: 2.25rem; /* حجم أكبر للعنوان */
+}
+
+.section-header-home .section-title-home::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 4px;
+  background-color: var(--primary-orange);
+  border-radius: 2px;
+}
+
+.section-header-home .section-subtitle-home {
+  font-size: 1.1rem;
+  color: var(--text-secondary-grey);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-pricing-card {
+  border: 1px solid var(--card-border-color);
+  border-radius: 12px; /* زوايا أكثر دائرية */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.home-pricing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+.home-pricing-card.recommended {
+  border-top: 4px solid var(--primary-orange);
+  box-shadow: 0 1rem 2rem rgba(0,0,0,0.12); /* ظل أبرز للخطة الموصى بها */
+}
+
+.recommended-badge-home {
+  position: absolute;
+  top: 0; 
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%); /* ليتمركز فوق الحدود العلوية */
+  background-color: var(--primary-orange);
+  color: white;
+  padding: 6px 18px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 25px;
+  z-index: 10; /* لضمان ظهوره فوق البطاقة */
+}
+
+.plan-icon-home {
+  font-size: 3rem !important; /* حجم الأيقونة */
+  margin-bottom: 1rem !important;
+}
+
+.plan-icon-home.icon-recommended {
+  color: var(--primary-orange) !important;
+}
+.plan-icon-home.icon-standard {
+  color: var(--icon-standard-grey) !important;
+}
+
+.plan-name-home {
+  color: var(--text-primary-dark);
+  font-size: 1.6rem; /* حجم اسم الخطة */
+  font-weight: 700; /* خط أثقل */
+}
+
+.period-buttons-home .btn {
+  font-size: 0.875rem; /* حجم خط أزرار الفترة */
+  padding: 0.5rem 0.5rem; /* تباعد داخلي متناسق */
+  border-radius: 6px !important; /* لجعل الحواف متناسقة */
+  margin: 0 2px; /* هامش بسيط بين الأزرار */
+}
+.period-buttons-home .btn.flex-fill {
+    min-width: 0; /* للسماح للأزرار بالتقلص بشكل صحيح */
+}
+
+
+/* أزرار اختيار الفترة */
+.period-buttons-home .btn.period-toggle-btn-home.active,
+.period-buttons-home .btn.btn-primary-active { /* هذا اسم الكلاس الجديد */
+  background-color: var(--primary-orange) !important;
+  border-color: var(--primary-orange) !important;
+  color: white !important;
+  box-shadow: none;
+}
+
+.period-buttons-home .btn.period-toggle-btn-home:not(.active),
+.period-buttons-home .btn.btn-secondary-inactive { /* هذا اسم الكلاس الجديد */
+  background-color: #f8f9fa; /* خلفية رمادية فاتحة جدا للزر غير النشط */
+  border-color: #dee2e6; /* حدود رمادية فاتحة */
+  color: var(--text-secondary-grey) !important;
+}
+.period-buttons-home .btn.period-toggle-btn-home:not(.active):hover,
+.period-buttons-home .btn.btn-secondary-inactive:hover {
+  background-color: #e9ecef; /* خلفية أغمق قليلاً عند المرور */
+  border-color: #ced4da;
+  color: var(--text-primary-dark) !important;
+}
+
+
+.pricing-amount-wrapper-home {
+  margin-bottom: 1.5rem !important;
+}
+
+.pricing-amount-home {
+  font-size: 2.25rem; /* حجم السعر */
+  font-weight: 700;
+  color: var(--primary-orange);
+  line-height: 1.2;
+}
+
+.period-suffix-home {
+  font-size: 0.9rem;
+  color: var(--text-secondary-grey);
+}
+
+.features-list-home {
+  text-align: right; /* محاذاة النص لليمين */
+}
+.features-list-home li {
+  font-size: 0.95rem;
+  color: var(--text-secondary-grey);
+  line-height: 1.6;
+}
+.features-list-home .list-icon-check {
+  color: var(--success-green) !important; 
+  font-size: 1.1em;
+  vertical-align: middle; /* لمحاذاة أفضل للأيقونة مع النص */
+}
+
+.subscribe-btn-home {
+  padding: 0.8rem 1rem; /* تباعد داخلي أكبر للزر */
+  font-size: 1rem; /* حجم خط أكبر للزر */
+  border-radius: 8px; /* زوايا أكثر دائرية للزر */
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.subscribe-btn-home.btn-primary-solid { /* هذا اسم الكلاس الجديد */
+  background-color: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: white;
+}
+.subscribe-btn-home.btn-primary-solid:hover {
+  background-color: var(--primary-orange-darker);
+  border-color: var(--primary-orange-darker);
+}
+
+.subscribe-btn-home.btn-outline-primary { /* هذا اسم الكلاس الجديد */
+  color: var(--primary-orange);
+  border-color: var(--primary-orange);
+  background-color: transparent;
+}
+.subscribe-btn-home.btn-outline-primary:hover {
+  background-color: var(--primary-orange);
+  color: white;
+  border-color: var(--primary-orange);
+}
+
+/* تعديلات للشاشات الأصغر */
+@media (max-width: 991px) {
+    .home-pricing-card.recommended {
+        order: -1; /* لجعل الخطة الموصى بها تظهر أولاً في تخطيط العمود */
+    }
+}
+
+@media (max-width: 767px) {
+  .section-header-home .section-title-home {
+    font-size: 1.8rem;
+  }
+  .section-header-home .section-subtitle-home {
+    font-size: 1rem;
+  }
+  .plan-name-home {
+    font-size: 1.4rem;
+  }
+  .pricing-amount-home {
+    font-size: 2rem;
+  }
+  .home-pricing-card {
+    margin-bottom: 20px; /* مسافة إضافية بين البطاقات على الشاشات الصغيرة */
+  }
+  .period-buttons-home .btn {
+    font-size: 0.8rem;
+    padding: 0.4rem; /* تقليل الحشوة قليلاً */
+  }
+}
+.home-pricing-card.recommended .pricing-amount-home {
+  color: var(--primary-orange);
+  font-size: 1.75rem;
+}.subscribe-btn-home.btn-primary-solid {
+  background-color: var(--primary-orange);
+  border: none;
+}
+
+.subscribe-btn-home.btn-primary-solid:hover {
+  background-color: var(--primary-orange-darker);
+}
+.btn-primary-active {
+  background-color: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: white;
+}
+
+.btn-primary-active:hover {
+  background-color: var(--primary-orange-darker);
+  border-color: var(--primary-orange-darker);
+}
+
+.btn-secondary-inactive {
+  background-color: white;
+  border: 1px solid var(--primary-orange);
+  color: var(--primary-orange);
+}
+
+.btn-secondary-inactive:hover {
+  background-color: var(--primary-orange);
+  color: white;
+}
+.subscribe-btn-home {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.subscribe-btn-home:hover {
+  transform: translateY(-2px);
+}
+@media (max-width: 576px) {
+  .home-pricing-card {
+    margin-bottom: 1rem;
+  }
+}

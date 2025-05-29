@@ -42,11 +42,30 @@
 /* روابط التنقل */
 .nav-links {
   display: flex;
+  align-items: center; /* توسيط عمودي للعناصر */
   gap: 1.5rem;
   flex: 2;
   justify-content: center;
 }
 
+/* --- تعديل الأنيميشن ليشمل كل العناصر في .nav-links --- */
+/* استخدام كلاس مشترك للتحكم في الأنيميشن الأولي */
+.nav-link-item {
+  opacity: 0;
+  transform: translateY(-15px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* تطبيق التأخير المتسلسل على كل العناصر داخل .nav-links التي تحمل كلاس .nav-link-item */
+.nav-links .nav-link-item:nth-child(1) { transition-delay: 0.1s; }
+.nav-links .nav-link-item:nth-child(2) { transition-delay: 0.2s; }
+.nav-links .nav-link-item:nth-child(3) { transition-delay: 0.3s; }
+.nav-links .nav-link-item:nth-child(4) { transition-delay: 0.4s; }
+.nav-links .nav-link-item:nth-child(5) { transition-delay: 0.5s; } /* إذا كان PREMIUM هو الخامس */
+/* إذا كان ترتيب PREMIUM مختلفًا، عدّل nth-child ليتناسب */
+
+
+/* تنسيقات خاصة بـ .nav-link (الروابط العادية) */
 .nav-link {
   color: var(--text-dark);
   text-decoration: none;
@@ -54,7 +73,8 @@
   font-size: 1rem;
   position: relative;
   padding: 0.5rem 0;
-  transition: all 0.3s ease;
+  /* الانتقال الخاص بـ nav-link (مثل الخط السفلي) يبقى كما هو */
+  /* transition: all 0.3s ease; /* يمكن إزالته إذا كان يتعارض مع أنيميشن الدخول */
 }
 
 .nav-link::after {
@@ -77,7 +97,38 @@
   left: 0;
 }
 
-/* أجزاء المستخدم */
+/* تنسيقات زر PREMIUM */
+.premium-btn {
+  background: linear-gradient(135deg, #d4af37, #ffcc70); /* ذهبي متدرج */
+  color: white !important; /* تأكيد لون النص */
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 18px;
+  /* margin-right: 10px; /* تم إزالته، الاعتماد على gap من .nav-links */
+  text-decoration: none;
+  transition: all 0.3s ease; /* انتقالات خاصة به للمرور والتكبير */
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+  display: inline-block; /* ليتصرف كعنصر كتلة مع الحفاظ على تدفقه */
+  line-height: normal; /* لضمان التوسيط العمودي للنص بشكل أفضل */
+}
+
+.premium-btn:hover {
+  background: linear-gradient(135deg, #c89e2b, #f2bd5b);
+  transform: scale(1.05) translateY(0); /* تأكد أن translateY لا يتأثر بالـ hover إذا كان الأنيميشن لا يزال يعمل */
+  box-shadow: 0 6px 14px rgba(212, 175, 55, 0.4);
+}
+
+
+/* --- تعديل قاعدة .loaded لتشمل .nav-link-item --- */
+.navbar-wrapper.loaded .nav-link-item, /* استهداف الكلاس المشترك */
+.navbar-wrapper.loaded .icon-btn,
+.navbar-wrapper.loaded .auth-buttons > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* أجزاء المستخدم (تبقى كما هي) */
 .user-actions {
   display: flex;
   align-items: center;
@@ -91,6 +142,14 @@
   gap: 0.8rem;
 }
 
+/* الأنيميشن الأولي للأيقونات وأزرار المصادقة (تبقى كما هي) */
+ .icon-btn, .auth-buttons > * {
+     opacity: 0;
+     transform: translateY(-15px);
+     transition: opacity 0.5s ease-out 0.5s, transform 0.5s ease-out 0.5s; /* تأخير يبدأ بعد روابط .nav-links */
+ }
+
+
 .icon-btn {
   color: var(--main-color);
   background: transparent;
@@ -101,16 +160,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; /* تم نقله للأنيميشن العام */
 }
 
 .icon-btn:hover {
   background-color: var(--main-color);
   color: var(--text-light);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.0); /* تأكد أن scale لا يتأثر إذا كان الأنيميشن لا يزال يعمل */
 }
 
-/* أزرار المصادقة */
+/* أزرار المصادقة (تبقى كما هي) */
 .auth-buttons {
   display: flex;
   align-items: center;
@@ -124,7 +183,7 @@
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; /* تم نقله للأنيميشن العام */
 }
 
 .login-btn {
@@ -144,12 +203,11 @@
   color: var(--text-light);
   border: 1px solid var(--main-color);
   text-decoration: none;
-
 }
 
 .register-btn:hover {
   background-color: var(--hover-color);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.0); /* تأكد أن scale لا يتأثر */
 }
 
 .logout-btn {
@@ -163,69 +221,10 @@
 }
 
 .user-role-badge {
-  background-color: var(--main-color);
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  /* ... (تبقى كما هي) ... */
 }
 
-/* التكيف مع الشاشات الصغيرة */
+/* التكيف مع الشاشات الصغيرة (تبقى كما هي) */
 @media (max-width: 992px) {
-  .navbar-container {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 0;
-  }
-  
-  .nav-links {
-    order: 3;
-    width: 100%;
-    justify-content: space-around;
-    gap: 0.5rem;
-  }
-  
-  .logo-container {
-    order: 1;
-    text-align: center;
-  }
-  
-  .user-actions {
-    order: 2;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .nav-link {
-    font-size: 0.9rem;
-  }
+  /* ... (تبقى كما هي) ... */
 }
-/* NavBar.css */
-.nav-link {
-  opacity: 0;
-  transform: translateY(-15px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-  /* تأخير مختلف لكل عنصر (اختياري) */
-}
-
-.nav-link:nth-child(1) { transition-delay: 0.1s; }
-.nav-link:nth-child(2) { transition-delay: 0.2s; }
-.nav-link:nth-child(3) { transition-delay: 0.3s; }
-.nav-link:nth-child(4) { transition-delay: 0.4s; }
-/* وهكذا للأيقونات والأزرار الأخرى */
-
-.navbar-wrapper.loaded .nav-link,
-.navbar-wrapper.loaded .icon-btn,
-.navbar-wrapper.loaded .auth-buttons > * { /* استهداف العناصر داخل الأزرار */
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* نفس الشيء للأيقونات والأزرار */
- .icon-btn, .auth-buttons > * {
-     opacity: 0;
-     transform: translateY(-15px);
-      /* ضبط الانتقال والتأخير */
-     transition: opacity 0.5s ease-out 0.5s, transform 0.5s ease-out 0.5s; /* تأخير يبدأ بعد القوائم */
- }

@@ -40,7 +40,11 @@
    visibility: visible !important;
    opacity: 1 !important;
 }
-
+.dashboard-container .sidebar-nav .nav-link i
+{
+margin: 5px;
+color: #d6762e !important;
+}
 
 
 

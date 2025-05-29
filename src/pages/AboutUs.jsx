@@ -37,6 +37,7 @@ const AboutUs = () => {
         animate="visible"
         variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
         className="about-us-page py-4"
+        dir='rtl'
     >
       <Container>
         {/* --- قسم العنوان والصورة --- */}

@@ -242,7 +242,7 @@
     /* لتثبيته أثناء التمرير */
     position: sticky;
     top: 20px; /* المسافة من الأعلى عند التثبيت */
-    top: calc(130px + 20px);
+    top: calc(130px + 20px) !important;
 }
 
 .contact-box h5 {
@@ -314,4 +314,127 @@
     .property-title {
         font-size: 1.5rem;
     }
+}/* PropertyDetails.css */
+.agent-profile-btn {
+   background-color: #f0f0f0; 
+   border-color: #ccc; 
+  color: #f58220; 
+  transition: all 0.2s ease-in-out;
+}
+
+.agent-profile-btn:hover {
+       border-color: #d6762e; 
+
+  background-color: #d6762e; 
+   transform: translateY(-1px); 
+}
+/* PropertyDetails.css */
+
+/* ... (جميع الأنماط الموجودة لديك مسبقاً تبقى كما هي) ... */
+
+/* --- بداية: أنماط زر حفظ العقار --- */
+.save-property-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  /* افترض أن لديك متغير --primary-orange، إذا لا، استبدله بلون مباشر مثل #f58220 */
+  border-color: var(--primary-orange, #f58220); 
+  color: var(--primary-orange, #f58220);
+  transition: all 0.2s ease-in-out;
+  padding-top: 0.6rem; /* زيادة الحشو لزر أكبر */
+  padding-bottom: 0.6rem;
+  font-size: 0.95rem; /* حجم خط مناسب */
+}
+
+.save-property-button:hover,
+.save-property-button:focus,
+.save-property-button:active {
+  background-color: var(--primary-orange, #f58220) !important;
+  color: white !important;
+  border-color: var(--primary-orange, #f58220) !important;
+  box-shadow: 0 0 0 0.2rem rgba(211, 34, 181, 0.5); /* ظل عند التركيز مشابه لأزرار Bootstrap */
+}
+
+/* PropertyDetails.css */
+
+/* ... (جميع الأنماط الموجودة لديك مسبقاً تبقى كما هي) ... */
+
+/* --- أنماط زر حفظ العقار --- */
+.save-property-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  /* استخدام متغيرات الألوان إذا كانت معرفة، وإلا استخدم الألوان مباشرة */
+  border-color: #901090; 
+  color: #901090; /* لون الأيقونة الافتراضية (bi-bookmark) سيكون برتقالي */
+  transition: all 0.2s ease-in-out;
+  padding-top: 0.55rem; /* تعديل الحشو ليتناسب مع حجم الخط */
+  padding-bottom: 0.55rem;
+  font-size: 0.9rem; /* حجم خط مناسب للزر */
+}
+
+.save-property-button:hover,
+.save-property-button:focus,
+.save-property-button:active {
+  background-color: #901090!important;
+  color: white !important; /* النص والأيقونات ستصبح بيضاء عند المرور */
+  border-color: #901090 !important;
+  /* box-shadow: 0 0 0 0.2rem rgba(245, 130, 32, 0.5); يمكنك إضافته إذا أردت */
+}
+
+/* للتحكم بلون أيقونة الحفظ (الصفراء) بشكل منفصل إذا لزم الأمر،
+   مع أن text-warning يجب أن تكون كافية */
+.save-property-button .bi-bookmark-dash-fill.text-warning {
+  color: var(--bs-warning, #ffc107) !important; /* تأكيد اللون الأصفر */
+}
+
+/* لضمان أن الأيقونات (بما فيها الصفراء) تصبح بيضاء عند المرور فوق الزر */
+.save-property-button:hover .bi,
+.save-property-button:focus .bi,
+.save-property-button:active .bi {
+  color: white !important;
+}
+
+
+.save-property-button .spinner-border {
+  width: 0.9em; /* حجم المؤشر بالنسبة للنص */
+  height: 0.9em;
+  border-width: 0.15em; /* سماكة خط المؤشر */
+}
+
+.save-property-button .bi { /* لجميع أيقونات Bootstrap داخل الزر */
+  font-size: 1.1em; 
+  vertical-align: middle; 
+  margin-left: 0.3rem; /* لـ RTL، هذا يضع مسافة بعد الأيقونة */
+}
+.save-property-button .me-2 { /* للتأكد من أن Bootstrap me-2 يعمل كما هو متوقع */
+    margin-right: 0.5rem !important; /* لـ LTR */
+    margin-left: 0 !important; /* إلغاء الهامش الأيسر إذا كان النص بعد الأيقونة */
+}
+/* بما أن النص باللغة العربية، الأيقونة يجب أن تكون على اليمين والنص على اليسار
+   لذلك، الهامش يجب أن يكون على يسار الأيقونة إذا كانت هي الأولى
+   أو على يمين الأيقونة إذا كانت بعد النص. Bootstrap me-2 (margin-end) هو الأفضل هنا.
+   إذا كانت الأيقونة قبل النص: <i class="bi bi-bookmark me-2"></i>
+*/
+.save-property-button i.me-2 { /* هذا يضمن أن me-2 من Bootstrap يعطي هامشاً صحيحاً في سياق RTL */
+    margin-left: 0.5rem !important;
+    margin-right: 0 !important;
+}
+
+
+/* (اختياري) تعديل لـ contact-box لضمان وجود مسافة إذا كان زر الحفظ هو آخر عنصر */
+.contact-box > *:last-child {
+    margin-bottom: 0 !important; 
+}
+.contact-box .save-property-button {
+    margin-top: 0.75rem; 
+}
+
+/* --- متغيرات ألوان رئيسية (تأكد من تعريفها في ملف CSS عام أو هنا إذا لم تكن موجودة) --- */
+:root {
+  --primary-orange: #f58220;
+  --bs-warning: #ffc107; /* لون Bootstrap الأصفر القياسي */
+  /* ... أي متغيرات أخرى تستخدمها ... */
 }

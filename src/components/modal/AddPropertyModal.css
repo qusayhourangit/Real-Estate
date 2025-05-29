@@ -439,3 +439,51 @@
 .addprop{
   margin-inline: 30px;
 }
+/* في AddPropertyModal.css */
+/* في AddPropertyModal.css أو ملف CSS مشابه */
+
+.custom-property-feature-switch .form-check-input {
+  /* الأبعاد الأساسية للمفتاح (يمكنك تعديلها لتناسب تصميمك) */
+  width: 3em;      /* عرض المفتاح */
+  height: 1.5em;   /* ارتفاع المفتاح */
+  margin-top: 0.25em; /* لضبط المحاذاة العمودية مع النص إذا لزم الأمر */
+  cursor: pointer;
+  border: 1px solid #adb5bd; /* لون إطار خفيف للمسار عندما يكون مطفأ */
+
+  /* --- حالة الإطفاء (OFF) --- */
+  /* لون خلفية المسار عندما يكون المفتاح مطفأ (رمادي فاتح) */
+  background-color: #e9ecef; 
+  
+  /* الدائرة (المقبض) بلون #e38e49 عندما يكون المفتاح مطفأ */
+  /* يتم ذلك بتغيير لون التعبئة (fill) في الـ SVG الخاص بالمقبض */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e38e49'/%3e%3c/svg%3e");
+  
+  /* إزالة تأثيرات التركيز (focus) الافتراضية إذا أردت، أو تخصيصها */
+  box-shadow: none; 
+}
+
+.custom-property-feature-switch .form-check-input:focus {
+  border-color: #e38e4980; /* لون إطار أفتح عند التركيز */
+  box-shadow: 0 0 0 0.25rem rgba(227, 142, 73, 0.25); /* ظل خفيف بلون #e38e49 عند التركيز */
+  
+  /* الحفاظ على لون الدائرة برتقالي عند التركيز وهو مطفي */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e38e49'/%3e%3c/svg%3e");
+}
+
+/* --- حالة التشغيل (ON) --- */
+.custom-property-feature-switch .form-check-input:checked {
+  /* لون خلفية المسار #e38e49 عندما يكون المفتاح شغالاً */
+  background-color: #e38e49;
+  border-color: #e38e49; /* لون إطار المسار ليطابق الخلفية */
+
+  /* الدائرة (المقبض) بيضاء عندما يكون المفتاح شغالاً */
+  /* يتم ذلك بتغيير لون التعبئة (fill) في الـ SVG الخاص بالمقبض */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* تخصيص النص بجانب المفتاح إذا لزم الأمر */
+.custom-property-feature-switch .form-check-label {
+  padding-left: 0.75em; /* تعديل المسافة بين المفتاح والنص */
+  font-size: 1rem;    /* تعديل حجم خط النص */
+  cursor: pointer;
+}

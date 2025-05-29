@@ -1,0 +1,346 @@
+/* AgentProfilePage.css */
+
+:root {
+  --primary-orange: #f58220;
+  --primary-orange-darker: #d96f1c;
+  --text-primary-dark: #333;
+  --text-secondary-grey: #6c757d;
+  --background-light: #f8f9fa; /* خلفية أفتح قليلاً */
+  --card-border-light: #e9ecef; /* حدود أفتح */
+  --card-shadow: rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: rgba(0, 0, 0, 0.1);
+  --verified-green: #28a745;
+  --warning-yellow: #ffc107; /* استخدمت هذا للشارات الصفراء */
+  --price-color: #d6762e; /* لون السعر من BestChoices */
+}
+
+body { /* لضمان تطبيق الخط على كل الصفحة إذا لم يكن مطبقاً بشكل عام */
+  font-family: 'Cairo', sans-serif;
+}
+
+.agent-profile-page-wrapper {
+  padding-top: 1.5rem; /* تقليل الهامش العلوي قليلاً */
+  padding-bottom: 2rem;
+  min-height: 100vh;
+}
+
+.agent-profile-page-content {
+  background-color: #f6f1eb;
+  border-radius: 15px; /* تدوير أكثر */
+  box-shadow: 0 10px 30px var(--card-shadow);
+  padding: 1.5rem; /* تعديل الهامش الداخلي */
+}
+
+.page-loading-spinner {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary-grey);
+}
+.page-loading-spinner .spinner-border {
+  color: var(--primary-orange) !important;
+}
+
+
+/* --- العمود الأيمن: معلومات الوكيل --- */
+.agent-sidebar-info .agent-details-card {
+  border-radius: 10px;
+  border: 1px solid var(--card-border-light);
+  background-color: #fff; /* تأكيد لون الخلفية */
+}
+
+.agent-avatar-sidebar {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border: 3px solid var(--primary-orange); /* إطار برتقالي للصورة */
+  box-shadow: 0 4px 12px var(--card-shadow);
+  margin-bottom: 1rem;
+  padding: 3px; /* هامش داخلي بسيط لإظهار الإطار بشكل أفضل */
+  background-color: white; /* خلفية بيضاء داخل الإطار */
+}
+
+.agent-name-sidebar {
+  font-weight: 700;
+  color: var(--text-primary-dark);
+  font-size: 1.25rem;
+}
+
+.agent-office-name-sidebar {
+  font-size: 0.85rem;
+  color: var(--text-secondary-grey);
+}
+
+.verified-agent-badge-sidebar {
+  background-color: var(--primary-orange) !important;
+  color: white !important;
+  font-size: 0.8rem !important;
+  padding: 0.4rem 0.9rem !important;
+  font-weight: 500;
+}
+
+.agent-contact-info {
+  padding-right: 0;
+  font-size: 0.875rem; /* حجم خط مناسب */
+  list-style-type: none; /* إزالة نقاط القائمة */
+}
+.agent-contact-info li {
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+}
+.agent-contact-info li i {
+  font-size: 1rem; /* حجم أيقونة مناسب */
+  width: 24px; 
+  text-align: center; /* توسيط الأيقونة */
+}
+.agent-contact-info a {
+  color: var(--text-primary-dark);
+  text-decoration: none;
+  word-break: break-all; /* لكسر النصوص الطويلة مثل الإيميل */
+}
+.agent-contact-info a:hover {
+  color: var(--primary-orange);
+}
+
+/* --- العمود الأيسر --- */
+
+
+.agent-bio-section-card { /* بطاقة النبذة */
+     border-radius: 10px;
+    border: 1px solid var(--card-border-light);
+    background-color: #fff;
+    width: 55%;
+    text-align: center;
+    right: 16%;
+}
+.agent-bio-section-card .card-body {
+    padding: 1.5rem; /* زيادة الهامش الداخلي للنبذة */
+}
+.agent-bio-section-card .section-title-underline::after {
+  right:103px;
+}
+.section-title-underline {
+  position: relative;
+  padding-bottom: 0.6rem;
+  margin-bottom: 2rem !important; 
+  font-weight: 700;
+  color: var(--text-primary-dark);
+  font-size: 1.5rem; /* حجم الخط للعنوان الرئيسي للقسم */
+}
+.section-title-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0; 
+  width: 60px;
+  height: 3.5px;
+  background-color: var(--primary-orange);
+  border-radius: 2px; /* تدوير خفيف للخط */
+}
+.properties-title-main { /* لعنوان "عقارات الوكيل" */
+  font-size: 1.6rem; 
+}
+
+/* --- Property Card Styling (Inspired by BestChoices) --- */
+.property-card {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%; /* لجعل كل البطاقات بنفس الارتفاع */
+  background-color: #ffffff !important;
+  color: var(--text-primary-dark) !important;
+  border: 1px solid var(--card-border-light) !important; /* ! استخدام متغير */
+  border-radius: 0.6rem; /* تدوير من BestChoices */
+  box-shadow: 0 3px 8px var(--card-shadow); /* ظل من BestChoices */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden; 
+  opacity: 1 !important; 
+  visibility: visible !important; 
+}
+.property-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px var(--card-hover-shadow);
+  cursor: pointer;
+}
+.property-card.truly-featured-property-card { /* إذا أردت تمييز إضافي للبطاقات المميزة */
+  border-color: var(--warning-yellow); 
+  border-width: 1.5px;
+}
+
+/* Card Image (من BestChoices.css) */
+.property-card .property-image {
+  width: 100%;
+  height: 200px; /* ارتفاع ثابت للصورة */
+  object-fit: cover;
+  background-color: #eee; /* لون احتياطي */
+  display: block;
+  transition: transform 0.3s ease-in-out;
+}
+.property-card:hover .property-image {
+  transform: scale(1.05);
+}
+
+/* Card Body (من BestChoices.css) */
+.property-card .card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  color: inherit !important;
+}
+
+/* Price (من BestChoices.css) */
+.property-card .price-output { /* استخدام نفس اسم الكلاس من BestChoices إذا أردت */
+  color: var(--price-color) !important; 
+  margin-bottom: 0.25rem;
+  font-weight: bold; /* تأكيد الخط العريض */
+  font-size: 1.2rem; /* حجم خط السعر */
+}
+.property-card .rent-period {
+  font-size: 0.75em;
+}
+
+/* Card Title (من BestChoices.css) */
+.property-card .property-card-title {
+  font-size: 1.05rem; /* تعديل حجم الخط */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary-dark) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Card Address (من BestChoices.css) */
+.property-card .property-card-address {
+  font-size: 0.85rem;
+  color: var(--text-secondary-grey) !important;
+  margin-bottom: 0; /* إزالة الهامش السفلي إذا كان هناك شارة تحته */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+.property-card .property-card-address .IAD { /* أيقونة الموقع */
+  color: var(--price-color) !important; /* برتقالي */
+  font-size: 1em; /* حجم الأيقونة */
+  margin-left: 0.3rem; /* لـ RTL */
+}
+
+/* شارة "وكيل معتمد" الصفراء على البطاقة (من BestChoices) */
+.profileagent .verified-agent-info-badge {
+  font-size: 0.7rem !important;
+  padding: 0.3em 0.7em !important;
+  background-color: var(--warning-yellow) !important;
+  color: var(--text-primary-dark) !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid #E7A400; /* يمكن إزالته إذا لم يعجبك */
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  
+  margin-right: 0px; 
+}
+.verified-agent-info-badge .bi-patch-check-fill,
+.verified-agent-info-badge .bi-check-circle-fill { /* لدعم كلا الأيقونتين */
+  font-size: 1em;
+  margin-left: 0.3em; /* لـ RTL */
+}
+
+
+/* Top-Left Featured Ribbon (الشريط الذهبي من BestChoices) */
+.top-featured-badge {
+  position: absolute;
+  top: 0px;
+  left: 10px; /* مسافة من اليسار */
+  color: white; /* لون الأيقونة */
+  padding: 0; /* لا حاجة للحشو إذا كانت الأيقونة هي كل شيء */
+  font-size: 1.8rem; /* حجم الأيقونة نفسها */
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  z-index: 4; /* فوق الصورة */
+}
+.top-featured-badge i.bi-bookmark-check-fill { /* تخصيص الأيقونة */
+  color: var(--warning-yellow); /* لون الأيقونة ذهبي */
+  /* -webkit-text-stroke: 1px var(--text-primary-dark);  حد أسود خفيف للأيقونة (اختياري) */
+  /* text-shadow: 0px 0px 3px rgba(0,0,0,0.3); ظل خفيف للأيقونة (اختياري) */
+}
+
+
+/* Top-Right Tags (للبيع، نوع العقار) */
+.property-tags .badge {
+  font-size: 0.65rem !important; /* أصغر قليلاً */
+  font-weight: 500;
+  padding: 0.3em 0.6em !important;
+  color: white !important; /* لضمان وضوح النص */
+  border-radius: 50px !important; /* لجعلها دائرية */
+}
+.property-tags .badge.bg-primary { background-color: var(--bs-primary) !important; }
+.property-tags .badge.bg-primary-orange { background-color: var(--primary-orange) !important; }
+/* ... أضف ألوان أخرى حسب الحاجة ... */
+
+
+/* Favorite Button (من BestChoices) */
+.fav-button {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(2px);
+  transition: background-color 0.2s ease;
+  border: none !important;
+  z-index: 5; 
+  width: 32px !important; /* حجم موحد للزر */
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.fav-button:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+.fav-button svg, .fav-button .bi { /* لـ react-icons و bootstrap-icons */
+  font-size: 0.9rem; /* حجم الأيقونة داخل الزر */
+}
+.fav-button .spinner-border {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-width: .15em;
+  color: var(--price-color) !important;
+}
+
+/* Property Details Footer (det-icn من BestChoices) */
+.det-icn { /* الحاوية السفلية لتفاصيل العقار */
+  font-size: 0.8rem;
+  padding: 0.6rem 0.5rem !important; /* تقليل الهامش ليتناسب مع البطاقة */
+  color: var(--text-secondary-grey);
+}
+.det-icn .d-flex {
+  align-items: center;
+  gap: 0.3rem !important; /* تقليل المسافة بين الأيقونة والنص */
+}
+.det-icn i {
+  color: var(--price-color) !important; /* لون برتقالي للأيقونات السفلية */
+  font-size: 0.9rem; /* حجم مناسب للأيقونات */
+  margin-left: 0; /* إزالة الهامش الافتراضي إذا كان موجوداً */
+}
+.det-icn span {
+    white-space: nowrap; /* لمنع التفاف النص في التفاصيل الصغيرة */
+}
+
+.text-primary-orange {
+  color: var(--primary-orange) !important;
+}
+
+/* لتعديل شارة الغرض إذا كانت تستخدم primary-orange-bg */
+.tag-badge-agent.primary-orange-bg {
+    background-color: var(--primary-orange) !important;
+    color: white !important;
+}

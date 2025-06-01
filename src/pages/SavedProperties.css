@@ -27,7 +27,9 @@
     background-color: var(--main-color, #e38e49);
     color: white;
 }
-
+.register-btn:hover {
+    color: #fff;
+}
 /* تحديد موقع كل زر */
 .swiper-nav-btns.saved-nav-home .custom-swiper-button-prev {
     /* لـ RTL: Prev يكون على اليسار */
@@ -59,4 +61,8 @@
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 
+}
+.prompt-icon-container i {
+        font-size: 29px;
+    color: #f58220;
 }

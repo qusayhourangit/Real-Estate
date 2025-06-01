@@ -37,7 +37,7 @@ const getDealTypeColor = (type) => type === 'sale' ? 'danger' : type === 'rent' 
 const getPropertyTypeColor = (type) => type === 'house' ? 'info' : type === 'commercial' ? 'warning' : 'secondary';
 const getCategoryArabic = (type) => {
   // تأكد أن هذه القيم تطابق القيم الفعلية التي تأتي من الـ API للحقل 'type'
-  if (type === 'house' || type === 'apartment' || type === 'villa' || type === 'residential') return 'سكني';
+  if (type === 'house' || type === 'apartment' || type === 'villa' || type === 'residential') return 'شقة';
   if (type === 'commercial') return 'تجاري';
   if (type === 'land') return 'أرض';
   return 'غير محدد'; // أو type إذا أردت عرض القيمة كما هي
@@ -90,10 +90,30 @@ const BestChoices = () => {
       } while (currentPage <= lastPage);
 
       if (allProperties.length > 0) {
-        console.log("BestChoices - Data structure of the first property (check for 'is_featured'):", JSON.stringify(allProperties[0], null, 2));
+        console.log("BestChoices - Data structure of the first property (BEFORE SORTING - check for 'is_featured'):", JSON.stringify(allProperties[0], null, 2));
       } else {
         console.log("BestChoices - No properties fetched to check data structure.");
       }
+
+      // --- MODIFICATION START: Sort properties to show featured first ---
+      allProperties.sort((a, b) => {
+        const aIsFeatured = a.is_featured === 1 || String(a.is_featured) === "1";
+        const bIsFeatured = b.is_featured === 1 || String(b.is_featured) === "1";
+
+        if (aIsFeatured && !bIsFeatured) {
+          return -1; // العقار 'a' مميز وغير 'b', لذا 'a' يأتي أولاً
+        }
+        if (!aIsFeatured && bIsFeatured) {
+          return 1;  // العقار 'b' مميز وغير 'a', لذا 'b' يأتي أولاً
+        }
+        // إذا كان كلاهما مميزاً أو كلاهما غير مميز, يمكن إضافة معايير فرز ثانوية هنا إذا لزم الأمر
+        // مثلاً، الفرز حسب تاريخ الإضافة (بافتراض وجود حقل مثل 'created_at')
+        // if (a.created_at && b.created_at) {
+        //   return new Date(b.created_at) - new Date(a.created_at); // الأحدث أولاً
+        // }
+        return 0; // الحفاظ على الترتيب الأصلي إذا كانت الحالة متساوية
+      });
+      // --- MODIFICATION END ---
 
       setProperties(allProperties);
     } catch (err) {
@@ -206,12 +226,15 @@ const BestChoices = () => {
               onBeforeInit={(swiper) => {
                 swiper.params.navigation.prevEl = prevRef.current;
                 swiper.params.navigation.nextEl = nextRef.current;
+                swiper.navigation.update(); // تحديث الملاحة بعد تعيين العناصر
               }}
               className="pb-4"
             >
               {properties.map((property) => {
                 const isPropertyTrulyFeatured = property.is_featured === 1 || String(property.is_featured) === "1";
+                //  افترض أن isFromVerifiedAgent تعتمد أيضاً على is_featured بناءً على الكود الأصلي
                 const isFromVerifiedAgent = property.is_featured === 1 || String(property.is_featured) === "1";
+
 
                 return (
                   <SwiperSlide key={property.id} className="h-auto">
@@ -222,7 +245,7 @@ const BestChoices = () => {
                       <div className="position-relative">
                         {isPropertyTrulyFeatured && (
                           <div className="top-featured-badge">
-                            <i class="bi bi-bookmark-check-fill"></i>
+                            <i className="bi bi-bookmark-check-fill"></i> {/* استخدمت className بدل class */}
                           </div>
                         )}
 
@@ -257,7 +280,7 @@ const BestChoices = () => {
                               {getTypeArabic(property.purpose)}
                             </Badge>
                           )}
-                          {property.type && ( // تأكد أن property.type يُرجع قيمة مثل 'house', 'commercial'
+                          {property.type && ( 
                             <Badge bg={getPropertyTypeColor(property.type)} className="rounded-pill px-2 py-1 text-white">
                               {getCategoryArabic(property.type)}
                             </Badge>
@@ -285,9 +308,6 @@ const BestChoices = () => {
                       </div>
 
                       <Card.Body>
-                        {/* ---!!! إضافة شارة "وكيل معتمد" هنا !!!--- */}
-
-                        {/* ---!!! نهاية شارة "وكيل معتمد" !!!--- */}
                         <div className="fw-bold fs-5 mb-1" style={{ color: '#d6762e' }}>
                           {formatPrice(property.price)}
                           {property.purpose === 'rent' && <span className="rent-period text-muted small"> / شهري</span>}
@@ -296,19 +316,22 @@ const BestChoices = () => {
                         <h5 className="card-title">
                           {property.title || 'عنوان غير متوفر'}
                         </h5>
-
-                        <p className="card-text small text-muted mt-auto">
-                          <i className="bi bi-geo-alt-fill me-1 IAD"></i>
-                          {property.address || 'العنوان غير محدد'}                                  {isFromVerifiedAgent && (
-                            <Badge className="verified-agent-info-badge mb-2" > {/* تمت إزالة 'pill' و 'bg' */}
-                              <i className="bi bi-patch-check-fill"></i> {/* الأيقونة، يمكن إزالتها إذا لم تعد مرغوبة */}
-                              <span>وكيل معتمد</span> {/* وضع النص في span للتحكم الأفضل إذا لزم الأمر */}
-                            </Badge>
-                          )}
+                        
+                        <p className="card-text small text-muted mt-auto d-flex justify-content-between align-items-center">
+                            <span>
+                                <i className="bi bi-geo-alt-fill me-1 IAD"></i>
+                                {property.address || 'العنوان غير محدد'}
+                            </span>
+                            {isFromVerifiedAgent && (
+                                <Badge className="verified-agent-info-badge"> 
+                                <i className="bi bi-patch-check-fill me-1"></i>
+                                <span>وكيل معتمد</span>
+                                </Badge>
+                            )}
                         </p>
                       </Card.Body>
                       <div className="d-flex justify-content-around text-muted py-2 border-top det-icn">
-                        {property.type === 'commercial' ? (
+                        {property.type === 'commercial' || property.type === 'land' ? ( // تم إضافة 'land' هنا
                           property.area > 0 && (
                             <div className="d-flex align-items-center gap-1">
                               <i className="bi bi-aspect-ratio"></i>

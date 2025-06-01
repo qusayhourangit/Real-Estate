@@ -72,7 +72,7 @@ const MyProperties = () => {
       try {
         console.log(`Fetching properties page ${pageNumber}`);
         // تأكد من أن هذا الـ endpoint صحيح لجلب *كل* عقارات المستخدم (مع ترقيم الصفحات)
-        const response = await api.get(`/user/getProperty`, {
+        const response = await api.get(`/user/get-property`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { page: pageNumber }
         });

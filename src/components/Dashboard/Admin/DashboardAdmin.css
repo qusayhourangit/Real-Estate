@@ -197,3 +197,58 @@ color: #d6762e !important;
    bottom: 0;
    left: 0;
  }
+ /* يمكنك إضافة هذه القواعد في ملف CSS الخاص بلوحة التحكم أو PendingProperties.css */
+
+/* الحاوية العامة للترقيم (اختياري إذا أردت إضافة هوامش أو ما شابه) */
+.pagination-container nav {
+  /* مثال: margin-top: 1rem; */
+}
+
+/* النمط العام لكل روابط/أزرار الصفحات */
+.pagination .page-item .page-link {
+  color: #d6762e; /* لون برتقالي لأرقام الصفحات والأسهم (نفس لون الأزرار الرئيسية) */
+  border: 1px solid #dee2e6; /* إطار رمادي فاتح افتراضي */
+  margin: 0 3px; /* مسافة صغيرة بين أزرار الصفحات */
+  border-radius: 0.3rem; /* حواف دائرية قليلاً */
+  transition: all 0.2s ease-in-out; /* تأثير انتقال ناعم */
+}
+
+/* تأثير الـ hover على أزرار الصفحات (غير النشطة وغير المعطلة) */
+.pagination .page-item:not(.active):not(.disabled) .page-link:hover {
+  color: #ffffff; /* لون النص أبيض عند الـ hover */
+  background-color: #e38e49; /* درجة برتقالية أفتح قليلاً عند الـ hover */
+  border-color: #d6762e;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* ظل خفيف */
+}
+
+/* نمط زر الصفحة النشطة (الحالية) */
+.pagination .page-item.active .page-link {
+  z-index: 3;
+  color: #fff; /* لون النص أبيض */
+  background-color: #d6762e; /* اللون البرتقالي الرئيسي للصفحة النشطة */
+  border-color: #d6762e;
+  box-shadow: 0 2px 7px rgba(214, 118, 46, 0.4); /* ظل بلون الزر النشط */
+}
+.pagination .page-item.active .page-link:hover {
+  background-color: #c06522; /* درجة أغمق قليلاً عند المرور فوق الزر النشط */
+  border-color: #c06522;
+}
+
+
+/* نمط أزرار الصفحات المعطلة (مثل "السابق" في الصفحة الأولى) */
+.pagination .page-item.disabled .page-link {
+  color: #adb5bd; /* لون رمادي باهت للعناصر المعطلة */
+  pointer-events: none; /* لمنع النقر */
+  background-color: #f8f9fa; /* خلفية رمادية فاتحة جداً */
+  border-color: #dee2e6;
+}
+
+/* يمكنك تخصيص شكل النقاط (...) إذا أردت */
+.pagination .page-item.disabled .page-link span { 
+  /* مثال: color: #adb5bd; */
+}
+
+/* لضمان أن الأسهم (السابق/التالي) تأخذ نفس لون النص الأساسي للرابط */
+.pagination .page-link span[aria-hidden="true"] {
+  /* color: inherit; /* يرث اللون من .page-link */
+}

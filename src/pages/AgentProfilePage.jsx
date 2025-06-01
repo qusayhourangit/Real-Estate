@@ -130,16 +130,8 @@ const AgentProfilePage = () => {
     return types[type] || type;
   };
 
-  const getDealTypeColor = (dealType) => dealType === 'sale' ? 'primary-orange-bg' : 'primary';
-  
-  const getPropertyTypeColor = (propertyType) => {
-    const c = { 
-      apartment: 'success', villa: 'info', shop: 'warning', 
-      house: 'primary', office: 'secondary', land: 'dark',
-      commercial: 'danger', residential: 'info'
-    };
-    return c[propertyType] || 'dark';
-  };
+  const getDealTypeColor = (type) => type === 'sale' ? 'danger' : type === 'rent' ? 'success' : 'primary';
+const getPropertyTypeColor = (type) => type === 'house' ? 'info' : type === 'commercial' ? 'warning' : 'secondary';
 
   const handlePropertyClick = (propertyId) => { navigate(`/properties/${propertyId}`); };
  
